@@ -43,6 +43,7 @@ public class RegisterController {
         if (bindingResult.hasErrors()) {System.out.println("There are validation errors, please fix them");
             List<ObjectError> errors = bindingResult.getAllErrors();
             model.addAttribute("validationErrors", errors);
+           model.addAttribute("RegisterDto",  registerDTO);
             return "Register";
         } else {
             System.out.println("No validation errors, saving the register details");

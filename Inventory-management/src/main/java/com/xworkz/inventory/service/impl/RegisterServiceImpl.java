@@ -52,6 +52,19 @@ public class RegisterServiceImpl implements RegisterService {
         return status;
     }
 
+    @Override
+    public String findPhoneNumber(String phoneNumber) {
 
+        System.out.println("Invoking findPhoneNumber:Service " + phoneNumber);
+        String status = null;
+
+        if (phoneNumber != null) {
+
+            Boolean isCheck = registerRepo.phoneNumberExists(phoneNumber);
+            status = (isCheck) ? "Phone Number Already Exist" : "Phone Number Not Exist";
+        }
+
+        return status;
+    }
 }
 

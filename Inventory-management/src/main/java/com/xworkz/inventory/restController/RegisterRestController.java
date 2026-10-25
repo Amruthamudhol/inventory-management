@@ -21,4 +21,12 @@ public class RegisterRestController {
 
         return service.findEmail(email);
     }
+
+    @GetMapping("/checkPhoneNumber")
+    public String checkPhoneNumber(@RequestParam("phoneNumber") String phoneNumber) {
+
+        System.out.println("Invoking checkPhoneNumber: " + phoneNumber);
+
+        return service.findPhoneNumber(phoneNumber);
+    }
 }

@@ -42,4 +42,23 @@ public class RegisterRepoImpl implements RegisterRepo {
 
         return false;
     }
+
+
+    @Override
+    public Boolean phoneNumberExists(String phoneNumber) {
+
+        RegisterEntity entity = (RegisterEntity) entityManager
+                .createNamedQuery("findpno")
+                .setParameter("phoneNumber", phoneNumber)
+                .getResultList()
+                .stream()
+                .findFirst()
+                .orElse(null);
+
+        if (entity != null) {
+            return true;
+        }
+
+        return false;
+    }
 }

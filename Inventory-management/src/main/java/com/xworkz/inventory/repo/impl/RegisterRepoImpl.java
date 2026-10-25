@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 
 @Repository
@@ -21,5 +23,23 @@ public class RegisterRepoImpl implements RegisterRepo {
         System.out.println("Running save() in RegisterRepoImpl");
         System.out.println("RegisterEntity:"+registerEntity);
         this.entityManager.persist(registerEntity);
+    }
+
+    @Override
+    public Boolean emailExists(String email) {
+
+        RegisterEntity entity = (RegisterEntity) entityManager
+                .createNamedQuery("getEmail")
+                .setParameter("email", email)
+                .getResultList()
+                .stream()
+                .findFirst()
+                .orElse(null);
+
+        if (entity != null) {
+            return true;
+        }
+
+        return false;
     }
 }

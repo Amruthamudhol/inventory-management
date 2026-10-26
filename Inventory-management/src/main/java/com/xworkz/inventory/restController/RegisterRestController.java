@@ -17,7 +17,7 @@ public class RegisterRestController {
         return service.findEmail(email);
     }
 
-    @GetMapping("/checkPhoneNumber")
+    @GetMapping("/checkPhoneNumber/{phoneNumber:.+}")
     public String checkPhoneNumber(@PathVariable("phoneNumber") String phoneNumber) {
 
         System.out.println("Invoking checkPhoneNumber: " + phoneNumber);

@@ -1,4 +1,3 @@
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page isELIgnored="false" %>
 
@@ -11,8 +10,38 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f2f4f7;
+            margin: 0;
         }
 
+        /* Navigation Bar */
+        .navbar {
+            background-color: #007bff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar .logo {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+            font-size: 16px;
+        }
+
+        .navbar .nav-links a:hover {
+            text-decoration: underline;
+            color: #e0e0e0;
+        }
+
+        /* Login Container */
         .login-container {
             width: 350px;
             margin: 80px auto;
@@ -62,6 +91,20 @@
 
 <body>
 
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <a class="logo"
+       href="${pageContext.request.contextPath}/">
+        Inventory Management
+    </a>
+
+    <div class="nav-links">
+        <a href="${pageContext.request.contextPath}/">Home</a>
+        <a href="${pageContext.request.contextPath}/Register.jsp">Register</a>
+    </div>
+</nav>
+
+<!-- Login Form -->
 <div class="login-container">
 
     <h2>Inventory Management System</h2>
@@ -76,9 +119,7 @@
         </c:forEach>
     </c:if>
 
-    <form action="${pageContext.request.contextPath}/login"
-          method="post"
-          onsubmit="return validateLogin()">
+    <form action="${pageContext.request.contextPath}/login"  method="post"  onsubmit="return validateLogin()">
 
         Email:
         <input type="text"
@@ -107,7 +148,9 @@
 
     <div class="register-link">
         Don't have an account?
-        <a href="${pageContext.request.contextPath}/register">Register here</a>
+        <a href="${pageContext.request.contextPath}/Register.jsp">
+            Register here
+        </a>
     </div>
 
 </div>
@@ -123,7 +166,6 @@
         document.getElementById("emailError").innerText = "";
         document.getElementById("passwordError").innerText = "";
 
-        // Email validation
         if (email === "") {
             document.getElementById("emailError").innerText =
                 "Email cannot be empty";
@@ -134,7 +176,6 @@
             isValid = false;
         }
 
-        // Password validation
         if (password === "") {
             document.getElementById("passwordError").innerText =
                 "Password cannot be empty";

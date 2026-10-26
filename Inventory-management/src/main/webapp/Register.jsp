@@ -2,7 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page isELIgnored="false" %>
 
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -208,13 +207,19 @@
                     <div id="passwordError" class="text-danger small mt-1"></div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="phoneNumber" class="form-label">Phone Number</label>
-                    <input type="text" class="form-control" id="phoneNumber"
-                           name="phoneNumber" value="${RegisterDto.phoneNumber}"
-                           placeholder="Enter 10-digit phone number">
-                    <div id="phoneNumberError" class="text-danger small mt-1"></div>
-                </div>
+              <div class="mb-3">
+                  <label for="phoneNumber" class="form-label">Phone Number</label>
+
+                  <input type="tel"
+                         class="form-control"
+                         id="phoneNumber"
+                         name="phoneNumber"
+                         placeholder="Enter 10-digit phone number"
+                         maxlength="10"
+                         onblur="checkPhoneNumber()">
+
+                  <div id="PhoneError" class="text-danger small mt-1"></div>
+              </div>
 
                 <div class="mb-3">
                     <label for="address" class="form-label">Address</label>
@@ -337,9 +342,7 @@ function checkEmailExit() {
 
     console.log("Email entered:", emailId);
 
-    const url =
-        "${pageContext.request.contextPath}/api/inventory/checkEmailExit/"
-        + encodeURIComponent(emailId);
+    const url =  "${pageContext.request.contextPath}/api/inventory/checkEmailExit/"  + encodeURIComponent(emailId);
 
     console.log("Request URL:", url);
 
@@ -363,6 +366,45 @@ function checkEmailExit() {
 
     request.send();
 }
+
+
+
+function checkPhoneNumber() {
+
+    console.log("Invoking checkPhoneNumber");
+
+    let phoneNumber = document.getElementById("phoneNumber").value.trim();
+    console.log(phoneNumber);
+
+    if (!/^[6-9]\d{9}$/.test(phoneNumber)) {
+        document.getElementById("PhoneError").innerText =
+            "Enter a valid 10-digit phone number";
+        return;
+    }
+
+    const request = new XMLHttpRequest();
+    console.log(request);
+
+    request.open(
+        "GET",
+        "${pageContext.request.contextPath}/api/inventory/checkPhoneNumber/" +
+        encodeURIComponent(phoneNumber)
+    );
+
+    request.onload = function () {
+
+        console.log("Response is received from backend");
+        console.log(request.responseText);
+
+        document.getElementById("PhoneError").innerText =
+            request.responseText;
+    };
+
+    request.send();
+
+    console.log("Request is sent to backend");
+}
+
  </script>
 
 

@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository
 @Transactional
@@ -27,22 +28,19 @@ public class RegisterRepoImpl implements RegisterRepo {
 
     @Override
     public Boolean emailExists(String email) {
+        System.out.println("Checking email: [" + email + "]");
 
-        RegisterEntity entity = (RegisterEntity) entityManager
-                .createNamedQuery("getEmail")
-                .setParameter("email", email)
-                .getResultList()
-                .stream()
-                .findFirst()
-                .orElse(null);
+        List<?> result = entityManager
+                .createQuery(
+                        "SELECT e FROM RegisterEntity e WHERE e.email = :email"
+                )
+                .setParameter("email", email.trim())
+                .getResultList();
 
-        if (entity != null) {
-            return true;
-        }
+        System.out.println("Records found: " + result.size());
 
-        return false;
+        return !result.isEmpty();
     }
-
 
     @Override
     public Boolean phoneNumberExists(String phoneNumber) {

@@ -12,7 +12,10 @@ import javax.persistence.*;
 @ToString
 @Table(name = "register_details")
 
-@NamedQuery(name = "getEmail", query = "SELECT r FROM RegisterEntity r WHERE r.email = :email")
+@NamedQuery(
+        name = "getEmailId",
+        query = "SELECT e FROM RegisterEntity e WHERE e.email = :email"
+)
 @NamedQuery(name = "findpno", query = "SELECT e FROM RegisterEntity e WHERE e.phoneNumber = :phoneNumber")
 
 public class RegisterEntity {

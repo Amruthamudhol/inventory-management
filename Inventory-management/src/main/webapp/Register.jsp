@@ -188,13 +188,18 @@
                     <div id="nameError" class="text-danger small mt-1"></div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email Address</label>
-                    <input type="text" class="form-control" id="email"
-                           name="email" value="${RegisterDto.email}"
-                           placeholder="example@email.com">
-                    <div id="emailError" class="text-danger small mt-1"></div>
-                </div>
+             <div class="mb-3">
+                 <label for="email" class="form-label">Email Address</label>
+
+                 <input type="email"
+                        class="form-control"
+                        id="email"
+                        name="email"
+                        placeholder="example@gmail.com"
+                        onblur="checkEmailExit()">
+
+                 <div id="EmailError" class="text-danger small mt-1"></div>
+             </div>
 
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
@@ -256,6 +261,7 @@
 <!-- Bootstrap JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+
 <script>
     function validateForm() {
         let name = document.getElementById("name").value.trim();
@@ -268,7 +274,7 @@
         let isValid = true;
 
         document.getElementById("nameError").innerText = "";
-        document.getElementById("emailError").innerText = "";
+        document.getElementById("EmailError").innerText = "";
         document.getElementById("passwordError").innerText = "";
         document.getElementById("phoneNumberError").innerText = "";
         document.getElementById("addressError").innerText = "";
@@ -285,11 +291,11 @@
         }
 
         if (email === "") {
-            document.getElementById("emailError").innerText =
+            document.getElementById("EmailError").innerText =
                 "Email cannot be empty";
             isValid = false;
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            document.getElementById("emailError").innerText =
+            document.getElementById("EmailError").innerText =
                 "Enter a valid email address";
             isValid = false;
         }
@@ -304,21 +310,13 @@
             isValid = false;
         }
 
-        if (phoneNumber === "") {
-            document.getElementById("phoneNumberError").innerText =
-                "Phone number cannot be empty";
-            isValid = false;
-        } else if (!/^[0-9]{10}$/.test(phoneNumber)) {
+        if (!/^[0-9]{10}$/.test(phoneNumber)) {
             document.getElementById("phoneNumberError").innerText =
                 "Enter exactly 10 digits";
             isValid = false;
         }
 
-        if (address === "") {
-            document.getElementById("addressError").innerText =
-                "Address cannot be empty";
-            isValid = false;
-        } else if (address.length < 5) {
+        if (address.length < 5) {
             document.getElementById("addressError").innerText =
                 "Address must contain at least 5 characters";
             isValid = false;
@@ -332,7 +330,47 @@
 
         return isValid;
     }
+
+  function checkEmailExit() {
+      const emailId = document.getElementById("email").value.trim();
+
+      console.log("Input value:", emailId);
+
+      // Create request first
+      const request = new XMLHttpRequest();
+
+      // Build the URL
+      const url = "${pageContext.request.contextPath}/api/inventory/checkEmailExit?email="  + encodeURIComponent(emailId);
+
+      console.log("Request URL:", url);
+
+      // Open request after declaring it
+      request.open("GET", url, true);
+
+      request.onload = function () { console.log("Response:", request.responseText);
+
+          if (request.status === 200) {
+              document.getElementById("EmailError").innerText =
+                  request.responseText;
+          } else {
+              document.getElementById("EmailError").innerText =
+                  "Unable to check email";
+          }
+      };
+
+      request.onerror = function () {
+          document.getElementById("EmailError").innerText =
+              "Server connection failed";
+      };
+
+      request.send();
+  }
 </script>
+
+
+
+
+
 
 </body>
 </html>

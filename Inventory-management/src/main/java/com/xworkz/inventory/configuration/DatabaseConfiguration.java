@@ -24,66 +24,99 @@ public class DatabaseConfiguration {
     @Autowired
     private Environment environment;
 
-    public DatabaseConfiguration()
-    {
-        System.out.println("created DatabaseConfiguration");
+    public DatabaseConfiguration() {
+        System.out.println("Created DatabaseConfiguration");
     }
 
     @Bean
-    public DataSource dataSource()
-    {
-        System.out.println("Running dataSource() in DataBaseConfiguration");
-        DriverManagerDataSource dataSource=new DriverManagerDataSource();
+    public DataSource dataSource() {
+        System.out.println("Running dataSource() in DatabaseConfiguration");
 
-        dataSource.setDriverClassName(environment.getProperty("spring.datasource.driver-class-name"));
-        dataSource.setUrl(environment.getProperty("spring.datasource.url"));
-        dataSource.setUsername(environment.getProperty("spring.datasource.username"));
-        dataSource.setPassword(environment.getProperty("spring.datasource.password"));
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
+        dataSource.setDriverClassName(
+                environment.getProperty(
+                        "spring.datasource.driver-class-name"));
 
-//        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-//        dataSource.setUrl("jdbc:mysql://localhost:3306/poc");
-//        dataSource.setUsername("root");
-//        dataSource.setPassword("root");
+        dataSource.setUrl(
+                environment.getProperty(
+                        "spring.datasource.url"));
+
+        dataSource.setUsername(
+                environment.getProperty(
+                        "spring.datasource.username"));
+
+        dataSource.setPassword(
+                environment.getProperty(
+                        "spring.datasource.password"));
+
         return dataSource;
     }
 
     @Bean
-    public Properties properties()
-    {
-        System.out.println("Running properties() in DataBaseConfiguration");
-        Properties properties=new Properties();
+    public Properties properties() {
+        System.out.println("Running properties() in DatabaseConfiguration");
 
-        properties.setProperty("spring.jpa.properties.hibernate.dialect",environment.getProperty("spring.jpa.properties.hibernate.dialect"));
-        properties.setProperty("spring.jpa.hibernate.ddl-auto",environment.getProperty("spring.jpa.hibernate.ddl-auto"));
-        properties.setProperty("spring.jpa.show-sql",environment.getProperty("spring.jpa.show-sql"));
-        properties.setProperty("spring.jpa.hibernate.format_sql",environment.getProperty("spring.jpa.hibernate.format_sql"));
+        Properties properties = new Properties();
 
-//        properties.put("hibernate.dialect","org.hibernate.dialect.MySQLDialect");
-//        properties.put("hibernate.show_sql",true);
-//        properties.put("hibernate.hbm2ddl.auto","update");
+        properties.setProperty(
+                "hibernate.dialect",
+                "org.hibernate.dialect.MySQL8Dialect");
+
+        properties.setProperty(
+                "hibernate.hbm2ddl.auto",
+                environment.getProperty(
+                        "spring.jpa.hibernate.ddl-auto", "update"));
+
+        properties.setProperty(
+                "hibernate.show_sql",
+                environment.getProperty(
+                        "spring.jpa.show-sql", "true"));
+
+        properties.setProperty(
+                "hibernate.format_sql",
+                environment.getProperty(
+                        "spring.jpa.hibernate.format_sql", "true"));
 
         return properties;
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean(DataSource dataSource)
-    {
-        System.out.println("Running entityManagerFactoryBean() in DataBaseConfiguration");
-        LocalContainerEntityManagerFactoryBean factoryBean=new LocalContainerEntityManagerFactoryBean();
+    public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean(
+            DataSource dataSource) {
+
+        System.out.println(
+                "Running entityManagerFactoryBean() in DatabaseConfiguration");
+
+        LocalContainerEntityManagerFactoryBean factoryBean =
+                new LocalContainerEntityManagerFactoryBean();
+
         factoryBean.setDataSource(dataSource);
-        factoryBean.setPackagesToScan("com.xworkz.inventory.entity");
+
+        factoryBean.setPackagesToScan(
+                "com.xworkz.inventory.entity");
+
+        factoryBean.setJpaVendorAdapter(
+                new HibernateJpaVendorAdapter());
+
         factoryBean.setJpaProperties(properties());
-        factoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+
         return factoryBean;
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory)
-    {
-        System.out.println("Running transactionManager() in DataBaseConfiguration");
-        JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
-        jpaTransactionManager.setEntityManagerFactory(entityManagerFactory);
-        return jpaTransactionManager;
+    public PlatformTransactionManager transactionManager(
+            EntityManagerFactory entityManagerFactory) {
+
+        System.out.println(
+                "Running transactionManager() in DatabaseConfiguration");
+
+        JpaTransactionManager transactionManager =
+                new JpaTransactionManager();
+
+        transactionManager.setEntityManagerFactory(
+                entityManagerFactory);
+
+        return transactionManager;
     }
 }

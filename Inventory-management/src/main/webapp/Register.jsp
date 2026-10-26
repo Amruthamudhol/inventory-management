@@ -188,18 +188,18 @@
                     <div id="nameError" class="text-danger small mt-1"></div>
                 </div>
 
-             <div class="mb-3">
-                 <label for="email" class="form-label">Email Address</label>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
 
-                 <input type="email"
-                        class="form-control"
-                        id="email"
-                        name="email"
-                        placeholder="example@gmail.com"
-                        onblur="checkEmailExit()">
+                <input type="email"
+                       class="form-control"
+                       id="email"
+                       name="email"
+                       placeholder="example@gmail.com"
+                       onblur="checkEmailExit()">
 
-                 <div id="EmailError" class="text-danger small mt-1"></div>
-             </div>
+                <div id="EmailError" class="text-danger small mt-1"></div>
+            </div>
 
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
@@ -331,42 +331,39 @@
         return isValid;
     }
 
-  function checkEmailExit() {
-      const emailId = document.getElementById("email").value.trim();
 
-      console.log("Input value:", emailId);
+function checkEmailExit() {
+    const emailId = document.getElementById("email").value.trim();
 
-      // Create request first
-      const request = new XMLHttpRequest();
+    console.log("Email entered:", emailId);
 
-      // Build the URL
-      const url = "${pageContext.request.contextPath}/api/inventory/checkEmailExit?email="  + encodeURIComponent(emailId);
+    const url =
+        "${pageContext.request.contextPath}/api/inventory/checkEmailExit/"
+        + encodeURIComponent(emailId);
 
-      console.log("Request URL:", url);
+    console.log("Request URL:", url);
 
-      // Open request after declaring it
-      request.open("GET", url, true);
+    const request = new XMLHttpRequest();
 
-      request.onload = function () { console.log("Response:", request.responseText);
+    request.open("GET", url, true);
 
-          if (request.status === 200) {
-              document.getElementById("EmailError").innerText =
-                  request.responseText;
-          } else {
-              document.getElementById("EmailError").innerText =
-                  "Unable to check email";
-          }
-      };
+    request.onload = function () {
+        console.log("HTTP Status:", request.status);
+        console.log("Server Response:", request.responseText);
 
-      request.onerror = function () {
-          document.getElementById("EmailError").innerText =
-              "Server connection failed";
-      };
+        if (request.status === 200) {
+            document.getElementById("EmailError").innerText =
+                request.responseText;
+        }
+    };
 
-      request.send();
-  }
-</script>
+    request.onerror = function () {
+        console.log("Request failed");
+    };
 
+    request.send();
+}
+ </script>
 
 
 

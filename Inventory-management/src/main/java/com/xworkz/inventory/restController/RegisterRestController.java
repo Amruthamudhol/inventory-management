@@ -11,12 +11,9 @@ public class RegisterRestController {
 
     private RegisterService service;
 
-    @GetMapping("/checkEmailExit")
-    public String checkEmailExit(@RequestParam("email") String email) {
-
-        System.out.println("Controller received: [" + email + "]");
-        System.out.println("Email length: " + email.length());
-
+    @GetMapping("/checkEmailExit/{email:.+}")
+    public String checkEmailExit(@PathVariable("email") String email) {
+        System.out.println("Controller email: [" + email + "]");
         return service.findEmail(email);
     }
 

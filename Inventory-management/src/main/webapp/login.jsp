@@ -127,9 +127,11 @@
                id="email"
                name="email"
                value="${loginDto.email}"
-               placeholder="Enter your email">
+               placeholder="Enter your email"
+               onblur="checkLoginEmail()">
 
         <span id="emailError" class="error"></span>
+        <p id="emailStatus"></p>
 
         <br><br>
 
@@ -189,6 +191,45 @@
 
         return isValid;
     }
+
+
+    function checkLoginEmail() {
+
+        console.log("Checking login email");
+
+        let email = document.getElementById("email").value.trim();
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            document.getElementById("emailStatus").innerText = "Enter a valid email address";
+            document.getElementById("emailStatus").style.color = "red";
+            return;
+        }
+
+        const request = new XMLHttpRequest();
+
+        request.open( "GET","${pageContext.request.contextPath}/api/inventory/checkLoginEmail/" + encodeURIComponent(email));
+
+        request.onload = function () {
+
+            console.log("Response received from backend");
+            console.log(request.responseText);
+
+            let status = request.responseText.trim();
+
+            if (status === "Email Id Already Exist") {
+                document.getElementById("emailStatus").innerText ="Email is registered. You can log in.";
+                document.getElementById("emailStatus").style.color = "green";
+            } else {
+                document.getElementById("emailStatus").innerText =  "Email is not registered. Please register first.";
+                document.getElementById("emailStatus").style.color = "red";
+            }
+        };
+
+        request.send();
+
+        console.log("Request sent to backend");
+    }
+
 </script>
 
 </body>

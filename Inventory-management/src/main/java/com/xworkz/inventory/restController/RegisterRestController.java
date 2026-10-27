@@ -24,4 +24,12 @@ public class RegisterRestController {
 
         return service.findPhoneNumber(phoneNumber);
     }
+
+
+    @GetMapping("/checkLoginEmail/{email:.+}")
+    public String checkLoginEmail(@PathVariable("email") String email) {
+
+        System.out.println("Checking login email: [" + email + "]");
+        return service.findEmail(email);
+    }
 }

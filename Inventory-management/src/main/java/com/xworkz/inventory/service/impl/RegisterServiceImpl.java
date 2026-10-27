@@ -1,5 +1,6 @@
 package com.xworkz.inventory.service.impl;
 
+import com.xworkz.inventory.dto.LoginDto;
 import com.xworkz.inventory.dto.RegisterDTO;
 import com.xworkz.inventory.entity.RegisterEntity;
 import com.xworkz.inventory.repo.RegisterRepo;
@@ -78,5 +79,78 @@ public class RegisterServiceImpl implements RegisterService {
 
         return status;
     }
+
+    @Override
+    public RegisterDTO checkUserBylogin(LoginDto loginDto) {
+        System.out.println("Running checkUserByLogin()");
+
+        if (loginDto == null) {
+            return null;
+        }
+
+        RegisterEntity entity = registerRepo.findEntityByEmail(loginDto.getEmail());
+
+        if (entity == null) {
+            System.out.println("Email not found in database");
+            return null;
+        }
+
+        // Use this if the stored password is BCrypt encoded
+        boolean matched = bCryptPasswordEncoder.matches(
+                loginDto.getPassword(),
+                entity.getPassword()
+        );
+
+        if (matched) {
+            RegisterDTO dto = new RegisterDTO();
+            BeanUtils.copyProperties(entity, dto);
+            return dto;
+        }
+
+        System.out.println("Password does not match");
+        return null;
+    }
+
+
+    @Override
+    public boolean updateProfile(RegisterDTO registerDTO) {
+
+        if (registerDTO == null || registerDTO.getEmail() == null) {
+            return false;
+        }
+
+        RegisterEntity entity = registerRepo.findEntityByEmail(registerDTO.getEmail());
+
+        if (entity == null) {
+            return false;
+        }
+
+        entity.setName(registerDTO.getName());
+        entity.setPhoneNumber(registerDTO.getPhoneNumber());
+        entity.setAddress(registerDTO.getAddress());
+
+        registerRepo.update(entity);
+
+        return true;
+    }
+
+    @Override
+    public RegisterDTO findUserByEmail(String email) {
+
+        RegisterEntity entity = registerRepo.findEntityByEmail(email);
+
+        if (entity == null) {
+            return null;
+        }
+
+        RegisterDTO dto = new RegisterDTO();
+        BeanUtils.copyProperties(entity, dto);
+        dto.setPassword(null);
+
+        return dto;
+    }
 }
+
+
+
 

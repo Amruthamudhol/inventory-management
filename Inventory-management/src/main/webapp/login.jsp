@@ -100,7 +100,7 @@
 
     <div class="nav-links">
         <a href="${pageContext.request.contextPath}/">Home</a>
-        <a href="${pageContext.request.contextPath}/Register.jsp">Register</a>
+        <a href="${pageContext.request.contextPath}/register">Register</a>
     </div>
 </nav>
 
@@ -111,6 +111,7 @@
     <h3>Login Page</h3>
 
     <p style="color: green;">${successMessage}</p>
+    <p style="color: red;">${msg}</p>
     <p style="color: red;">${errorMessage}</p>
 
     <c:if test="${not empty validationErrors}">
@@ -119,7 +120,7 @@
         </c:forEach>
     </c:if>
 
-    <form action="${pageContext.request.contextPath}/login"  method="post"  onsubmit="return validateLogin()">
+    <form action="${pageContext.request.contextPath}/register/login"method="post" onsubmit="return validateLogin()">
 
         Email:
         <input type="text"
@@ -148,7 +149,7 @@
 
     <div class="register-link">
         Don't have an account?
-        <a href="${pageContext.request.contextPath}/Register.jsp">
+        <a href="${pageContext.request.contextPath}/register">
             Register here
         </a>
     </div>

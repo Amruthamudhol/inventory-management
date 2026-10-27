@@ -6,4 +6,6 @@ public interface RegisterRepo {
     void save(RegisterEntity registerEntity);
     Boolean emailExists(String email);
     Boolean phoneNumberExists(String phoneNumber);
+    RegisterEntity findEntityByEmail(String email);
+    void update(RegisterEntity registerEntity);
 }

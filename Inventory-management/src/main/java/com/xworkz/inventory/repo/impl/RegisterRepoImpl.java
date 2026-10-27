@@ -6,8 +6,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
@@ -17,6 +15,8 @@ public class RegisterRepoImpl implements RegisterRepo {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+
 
 
     @Override
@@ -58,5 +58,27 @@ public class RegisterRepoImpl implements RegisterRepo {
         }
 
         return false;
+    }
+
+    @Override
+    public RegisterEntity findEntityByEmail(String email) {
+
+        System.out.println("Finding email: [" + email + "]");
+
+        try {
+            return (RegisterEntity) entityManager
+                    .createNamedQuery("getEmailId")
+                    .setParameter("email", email.trim())
+                    .getSingleResult();
+
+        } catch (javax.persistence.NoResultException e) {
+            System.out.println("Email not found in database");
+            return null;
+        }
+    }
+
+    @Override
+    public void update(RegisterEntity registerEntity) {
+        entityManager.merge(registerEntity);
     }
 }

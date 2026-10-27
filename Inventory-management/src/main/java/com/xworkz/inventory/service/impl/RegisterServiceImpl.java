@@ -19,23 +19,40 @@ public class RegisterServiceImpl implements RegisterService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public void save(RegisterDTO registerDTO) {
+    public String save(RegisterDTO registerDTO) {
 
         System.out.println("Running save() in RegisterServiceImpl");
         System.out.println("RegisterDTO: " + registerDTO);
 
-        if (registerDTO != null) {
-
-            System.out.println("save RegisterDTO");
-            RegisterEntity registerEntity = new RegisterEntity();
-
-            String encodedPassword = bCryptPasswordEncoder.encode(registerDTO.getPassword());
-            registerDTO.setPassword(encodedPassword);
-
-            BeanUtils.copyProperties(registerDTO, registerEntity);
-            System.out.println("RegisterEntity: " + registerEntity);
-            registerRepo.save(registerEntity);
+        if (registerDTO == null) {
+            return "Invalid registration details";
         }
+
+        System.out.println("Saving RegisterDTO");
+
+        // Check email
+        if (registerRepo.emailExists(registerDTO.getEmail())) {
+            System.out.println("Email Id Already Exist");
+            return "Email Id Already Exist";
+        }
+
+        // Check phone number
+        if (registerRepo.phoneNumberExists(registerDTO.getPhoneNumber())) {
+            System.out.println("Phone Number Already Exist");
+            return "Phone Number Already Exist";
+        }
+
+        RegisterEntity registerEntity = new RegisterEntity();
+
+        String encodedPassword = bCryptPasswordEncoder.encode(registerDTO.getPassword());
+
+        registerDTO.setPassword(encodedPassword);
+        BeanUtils.copyProperties(registerDTO, registerEntity);
+
+        registerRepo.save(registerEntity);
+        System.out.println("Registration successful");
+
+        return "Registration Successful";
     }
 
     @Override

@@ -1,3 +1,4 @@
+
 package com.xworkz.inventory.controller;
 
 import com.xworkz.inventory.dto.RegisterDTO;
@@ -5,15 +6,9 @@ import com.xworkz.inventory.service.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @Controller
 @RequestMapping("/register")
@@ -26,34 +21,31 @@ public class RegisterController {
         System.out.println("Created RegisterController()");
     }
 
-    @GetMapping("/saveRegisterForm")
-    public String saveRegisterForm(Model model) {
-        System.out.println("Running saveRegisterForm() in RegisterController");
+    // Display registration page
+    @GetMapping({"", "/"})
+    public String getRegisterPage(Model model) {
+        System.out.println("Running getRegisterPage()");
         model.addAttribute("RegisterDto", new RegisterDTO());
         return "Register";
     }
 
-
-
+    // Process registration form
     @PostMapping("/saveRegisterForm")
-    public String saveRegisterDetails(@Valid @ModelAttribute("RegisterDto") RegisterDTO registerDTO, BindingResult bindingResult, Model model) {
+    public String saveRegisterForm(RegisterDTO registerDTO, Model model) {
 
-        System.out.println("Running saveRegisterDetails() in RegisterController");
+        System.out.println("Running saveRegisterForm()");
+        System.out.println("RegisterDTO: " + registerDTO);
 
-        if (bindingResult.hasErrors()) {System.out.println("There are validation errors, please fix them");
-            List<ObjectError> errors = bindingResult.getAllErrors();
-            model.addAttribute("validationErrors", errors);
-           model.addAttribute("RegisterDto",  registerDTO);
-            return "Register";
-        } else {
-            System.out.println("No validation errors, saving the register details");
+        String message = registerService.save(registerDTO);
 
-            this.registerService.save(registerDTO);
-            model.addAttribute("successMessage", "Register details saved successfully");
+        if ("Registration Successful".equals(message)) {
+            model.addAttribute("successMessage", message);
             model.addAttribute("RegisterDto", new RegisterDTO());
-
-            return "Register";
+        } else {
+            model.addAttribute("errorMessage", message);
+            model.addAttribute("RegisterDto", registerDTO);
         }
-    }
 
+        return "Register";
+    }
 }

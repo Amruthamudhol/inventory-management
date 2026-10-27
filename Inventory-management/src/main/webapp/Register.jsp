@@ -176,7 +176,7 @@
                 </div>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/register/saveRegisterForm"
+           <form action="${pageContext.request.contextPath}/register/saveRegisterForm"
                   method="post" onsubmit="return validateForm()">
 
                 <div class="mb-3">
@@ -253,6 +253,9 @@
                 </p>
 
             </form>
+
+            <p style="color: green;">${successMessage}</p>
+            <p style="color: red;">${errorMessage}</p>
         </div>
     </div>
 </main>

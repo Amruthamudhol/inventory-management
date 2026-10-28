@@ -13,6 +13,8 @@
 <form action="${pageContext.request.contextPath}/register/update"
       method="post">
 
+    <input type="hidden" name="id" value="${registerDto.id}">
+
     <label>Name:</label>
     <input type="text" name="name"
            value="${registerDto.name}" required>
@@ -34,10 +36,6 @@
     <br><br>
 
     <button type="submit">Update Profile</button>
-
-    <a href="${pageContext.request.contextPath}/register/edit?email=${registerDto.email}">
-        Cancel
-    </a>
 
 </form>
 

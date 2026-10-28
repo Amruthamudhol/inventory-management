@@ -84,6 +84,41 @@ public class RegisterRepoImpl implements RegisterRepo {
 
     @Override
     public void update(RegisterEntity registerEntity) {
-        entityManager.merge(registerEntity);
+
+        RegisterEntity registerEntity1 = entityManager.find(RegisterEntity.class, registerEntity.getId());
+
+        if (registerEntity1 == null) {
+            System.out.println("RegisterEntity not found");
+            return;
+        }
+
+        registerEntity1.setName(registerEntity.getName());
+        registerEntity1.setPhoneNumber(registerEntity.getPhoneNumber());
+        registerEntity1.setAddress(registerEntity.getAddress());
+
+
+        AuditEntity auditEntity = entityManager.createQuery("SELECT a FROM AuditEntity a WHERE a.register.id = :registerId", AuditEntity.class)
+                .setParameter("registerId", registerEntity1.getId())
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+
+        if (auditEntity != null) {
+            auditEntity.setUpdatedAt(LocalDateTime.now());
+            auditEntity.setUpdatedBy(registerEntity1.getName());
+        } else {
+            auditEntity = new AuditEntity();
+            auditEntity.setCreatedBy(registerEntity1.getName());
+            auditEntity.setCreatedAt(LocalDateTime.now());
+            auditEntity.setUpdatedBy(registerEntity1.getName());
+            auditEntity.setUpdatedAt(LocalDateTime.now());
+
+            // Link to the existing managed register entity
+            auditEntity.setRegister(registerEntity1);
+            registerEntity1.setAuditEntity(auditEntity);
+
+            entityManager.persist(auditEntity);
+        }
+
     }
 }

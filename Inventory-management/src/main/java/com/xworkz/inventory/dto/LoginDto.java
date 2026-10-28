@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 
 @Data
 public class LoginDto {
+    private int id;
 
     @NotBlank(message = "Email cannot be empty")
     @Email(message = "Enter a valid email address")

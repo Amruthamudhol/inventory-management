@@ -1,5 +1,6 @@
 package com.xworkz.inventory.repo.impl;
 
+import com.xworkz.inventory.entity.AuditEntity;
 import com.xworkz.inventory.entity.RegisterEntity;
 import com.xworkz.inventory.repo.RegisterRepo;
 import org.springframework.stereotype.Repository;
@@ -7,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -16,24 +18,31 @@ public class RegisterRepoImpl implements RegisterRepo {
     @PersistenceContext
     private EntityManager entityManager;
 
-
-
-
     @Override
     public void save(RegisterEntity registerEntity) {
-        System.out.println("Running save() in RegisterRepoImpl");
-        System.out.println("RegisterEntity:"+registerEntity);
-        this.entityManager.persist(registerEntity);
+
+        System.out.println("RegisterRepoImpl save method is called");
+
+        AuditEntity auditEntity = new AuditEntity();
+
+        auditEntity.setCreatedBy(registerEntity.getName());
+        auditEntity.setCreatedAt(LocalDateTime.now());
+
+        registerEntity.setAuditEntity(auditEntity);
+        auditEntity.setRegister(registerEntity);
+
+        entityManager.persist(registerEntity);
+
+        System.out.println("Data saved to DB: " + registerEntity.getName());
     }
 
     @Override
     public Boolean emailExists(String email) {
+
         System.out.println("Checking email: [" + email + "]");
 
         List<?> result = entityManager
-                .createQuery(
-                        "SELECT e FROM RegisterEntity e WHERE e.email = :email"
-                )
+                .createQuery("SELECT e FROM RegisterEntity e WHERE e.email = :email")
                 .setParameter("email", email.trim())
                 .getResultList();
 
@@ -53,11 +62,7 @@ public class RegisterRepoImpl implements RegisterRepo {
                 .findFirst()
                 .orElse(null);
 
-        if (entity != null) {
-            return true;
-        }
-
-        return false;
+        return entity != null;
     }
 
     @Override

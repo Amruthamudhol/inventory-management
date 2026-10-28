@@ -120,7 +120,8 @@
         </c:forEach>
     </c:if>
 
-    <form action="${pageContext.request.contextPath}/register/login"method="post" onsubmit="return validateLogin()">
+    <form action="${pageContext.request.contextPath}/register/login"
+          method="post" onsubmit="return validateLogin()">
 
         Email:
         <input type="text"

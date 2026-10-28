@@ -38,4 +38,8 @@ public class RegisterEntity {
 
     @Column(name = "role")
     private String role;
+
+
+    @OneToOne(mappedBy = "register", cascade = CascadeType.ALL)
+    private AuditEntity auditEntity;
 }

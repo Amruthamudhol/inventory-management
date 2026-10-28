@@ -171,12 +171,15 @@
                     <a class="nav-link" href="#about">About</a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="Register.jsp">Register</a>
-                </li>
-                <li class="nav-item">
-                    <a class="btn btn-primary ms-lg-2 mt-2 mt-lg-0"
-                       href="login.jsp">Login</a>
+         <li class="nav-item">
+                             <a class="nav-link" href="Register.jsp">Register</a>
+                         </li>
+                         <li class="nav-item">
+                             <a class="btn btn-primary ms-lg-2 mt-2 mt-lg-0"
+                                href="login.jsp">Login</a>
+         </li>
+
+             </li>
                 </li>
             </ul>
         </div>

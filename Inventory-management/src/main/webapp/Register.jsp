@@ -110,7 +110,9 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand" href="${pageContext.request.contextPath}/index.jsp">
+
+        <a class="navbar-brand"
+           href="${pageContext.request.contextPath}/">
             📦 InventoryPro
         </a>
 
@@ -125,20 +127,35 @@
 
         <div class="collapse navbar-collapse" id="navbarMenu">
             <ul class="navbar-nav ms-auto align-items-lg-center">
+
                 <li class="nav-item">
                     <a class="nav-link"
-                       href="${pageContext.request.contextPath}/index.jsp">Home</a>
+                       href="${pageContext.request.contextPath}/">
+                        Home
+                    </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link active"
-                       href="${pageContext.request.contextPath}/Register.jsp">Register</a>
+                    <a class="nav-link"
+                       href="${pageContext.request.contextPath}/#about">
+                        About
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="${pageContext.request.contextPath}/register">
+                        Register
+                    </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="btn btn-outline-light ms-lg-3 mt-2 mt-lg-0"
-                       href="${pageContext.request.contextPath}/login.jsp">Login</a>
+                       href="${pageContext.request.contextPath}/register/loginPage">
+                        Login
+                    </a>
                 </li>
+
             </ul>
         </div>
     </div>

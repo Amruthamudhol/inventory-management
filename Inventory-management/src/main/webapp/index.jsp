@@ -1,4 +1,4 @@
-
+<%@ page isELIgnored="false" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html lang="en">
@@ -146,46 +146,55 @@
 
 <body>
 
-<!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand" href="index.jsp">
+
+        <a class="navbar-brand"
+           href="${pageContext.request.contextPath}/">
             📦 InventoryPro
         </a>
 
         <button class="navbar-toggler" type="button"
                 data-bs-toggle="collapse"
-                data-bs-target="#navbarMenu"
-                aria-controls="navbarMenu"
-                aria-expanded="false"
-                aria-label="Toggle navigation">
+                data-bs-target="#navbarMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarMenu">
             <ul class="navbar-nav ms-auto align-items-lg-center">
+
                 <li class="nav-item">
-                    <a class="nav-link" href="index.jsp">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#about">About</a>
+                    <a class="nav-link"
+                       href="${pageContext.request.contextPath}/">
+                        Home
+                    </a>
                 </li>
 
-         <li class="nav-item">
-                             <a class="nav-link" href="Register.jsp">Register</a>
-                         </li>
-                         <li class="nav-item">
-                             <a class="btn btn-primary ms-lg-2 mt-2 mt-lg-0"
-                                href="login.jsp">Login</a>
-         </li>
-
-             </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="${pageContext.request.contextPath}/#about">
+                        About
+                    </a>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="${pageContext.request.contextPath}/register">
+                        Register
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="btn btn-primary"
+                       href="${pageContext.request.contextPath}/register/loginPage">
+                        Login
+                    </a>
+                </li>
+
             </ul>
         </div>
     </div>
 </nav>
-
 <!-- Header / Hero Section -->
 <header class="hero" id="about">
     <div class="container">

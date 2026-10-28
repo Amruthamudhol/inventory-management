@@ -20,10 +20,15 @@ public class RegisterController {
         System.out.println("Created RegisterController()");
     }
 
+    @GetMapping("/")
+    public String showHomePage() {
+        return "index";
+    }
+
+
     // Display registration page
     @GetMapping({"", "/"})
-    public String getRegisterPage(Model model) {
-        System.out.println("Running getRegisterPage()");
+    public String showRegisterPage(Model model) {
         model.addAttribute("RegisterDto", new RegisterDTO());
         return "Register";
     }
@@ -48,6 +53,11 @@ public class RegisterController {
         return "Register";
     }
 
+    @GetMapping("/loginPage")
+    public String showLoginPage(Model model) {
+        model.addAttribute("loginDto", new LoginDto());
+        return "login";
+    }
 
     // Process login form
     @PostMapping("/login")

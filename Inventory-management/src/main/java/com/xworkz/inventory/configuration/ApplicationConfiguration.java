@@ -28,11 +28,12 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public InternalResourceViewResolver internalResourceViewResolver() {
-        InternalResourceViewResolver resolver =
-                new InternalResourceViewResolver();
+    public InternalResourceViewResolver viewResolver() {
+        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+
         resolver.setPrefix("/");
         resolver.setSuffix(".jsp");
+
         return resolver;
     }
 

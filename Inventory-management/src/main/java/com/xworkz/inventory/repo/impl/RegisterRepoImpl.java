@@ -6,8 +6,7 @@ import com.xworkz.inventory.repo.RegisterRepo;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,6 +16,9 @@ public class RegisterRepoImpl implements RegisterRepo {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @PersistenceUnit
+    private EntityManagerFactory emf;
 
     @Override
     public void save(RegisterEntity registerEntity) {
@@ -81,44 +83,67 @@ public class RegisterRepoImpl implements RegisterRepo {
             return null;
         }
     }
-
     @Override
     public void update(RegisterEntity registerEntity) {
 
-        RegisterEntity registerEntity1 = entityManager.find(RegisterEntity.class, registerEntity.getId());
+        EntityManager manager = emf.createEntityManager();
+        EntityTransaction transaction = manager.getTransaction();
 
-        if (registerEntity1 == null) {
-            System.out.println("RegisterEntity not found");
-            return;
+        try {
+            transaction.begin();
+
+            // Find existing RegisterEntity
+            RegisterEntity entity =
+                    manager.find(RegisterEntity.class, registerEntity.getId());
+
+            if (entity == null) {
+                System.out.println("RegisterEntity not found");
+                transaction.rollback();
+                return;
+            }
+
+            // Update RegisterEntity details
+            entity.setName(registerEntity.getName());
+            entity.setPhoneNumber(registerEntity.getPhoneNumber());
+            entity.setAddress(registerEntity.getAddress());
+
+            // Get existing AuditEntity
+            AuditEntity audit = entity.getAuditEntity();
+
+            if (audit == null) {
+
+                // Create new AuditEntity
+                audit = new AuditEntity();
+
+                audit.setCreatedBy(entity.getName());
+                audit.setCreatedAt(LocalDateTime.now());
+
+                // Establish relationship
+                audit.setRegister(entity);
+                entity.setAuditEntity(audit);
+
+                manager.persist(audit);
+            }
+
+            // Update audit information
+            audit.setUpdatedBy(entity.getName());
+            audit.setUpdatedAt(LocalDateTime.now());
+
+            // Commit transaction
+            transaction.commit();
+
+            System.out.println("RegisterEntity updated successfully");
+
+        } catch (Exception e) {
+
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+
+            e.printStackTrace();
+
+        } finally {
+            manager.close();
         }
-
-        registerEntity1.setName(registerEntity.getName());
-        registerEntity1.setPhoneNumber(registerEntity.getPhoneNumber());
-        registerEntity1.setAddress(registerEntity.getAddress());
-
-
-        AuditEntity auditEntity = entityManager.createQuery("SELECT a FROM AuditEntity a WHERE a.register.id = :registerId", AuditEntity.class)
-                .setParameter("registerId", registerEntity1.getId())
-                .getResultStream()
-                .findFirst()
-                .orElse(null);
-
-        if (auditEntity != null) {
-            auditEntity.setUpdatedAt(LocalDateTime.now());
-            auditEntity.setUpdatedBy(registerEntity1.getName());
-        } else {
-            auditEntity = new AuditEntity();
-            auditEntity.setCreatedBy(registerEntity1.getName());
-            auditEntity.setCreatedAt(LocalDateTime.now());
-            auditEntity.setUpdatedBy(registerEntity1.getName());
-            auditEntity.setUpdatedAt(LocalDateTime.now());
-
-            // Link to the existing managed register entity
-            auditEntity.setRegister(registerEntity1);
-            registerEntity1.setAuditEntity(auditEntity);
-
-            entityManager.persist(auditEntity);
-        }
-
     }
 }

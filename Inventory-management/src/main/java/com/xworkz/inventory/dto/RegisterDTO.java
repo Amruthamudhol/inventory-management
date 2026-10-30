@@ -2,6 +2,7 @@ package com.xworkz.inventory.dto;
 
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -34,4 +35,6 @@ public class RegisterDTO {
 
     @NotBlank(message = "Please select a role")
     private String role;
+
+    private MultipartFile file;
 }

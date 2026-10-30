@@ -93,26 +93,25 @@ public class RegisterController {
     }
 
     @PostMapping("/update")
-    public String updateProfile(
-            @ModelAttribute RegisterDTO registerDTO,
-            Model model) {
+    public String updateProfile(@ModelAttribute RegisterDTO registerDTO, Model model) {
 
-        System.out.println("Update method is called: " + registerDTO);
+        System.out.println("Form Data: " + registerDTO);
 
         boolean updated = registerService.updateProfile(registerDTO);
 
         if (updated) {
-            RegisterDTO dto =
+            RegisterDTO updatedDTO =
                     registerService.findUserByEmail(registerDTO.getEmail());
 
-            model.addAttribute("registerDto", dto);
+            model.addAttribute("registerDto", updatedDTO);
+            model.addAttribute("msg", "Profile updated successfully!");
+
             return "dashboard";
         }
 
         model.addAttribute("registerDto", registerDTO);
-        model.addAttribute("msg", "Profile update failed");
+        model.addAttribute("msg", "Profile update failed!");
 
         return "editProfile";
     }
-
 }

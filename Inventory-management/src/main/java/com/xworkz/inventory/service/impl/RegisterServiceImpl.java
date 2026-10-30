@@ -119,17 +119,31 @@ public class RegisterServiceImpl implements RegisterService {
             return false;
         }
 
-        RegisterEntity entity = registerRepo.findEntityByEmail(registerDTO.getEmail());
+        RegisterEntity entity =
+                registerRepo.findEntityByEmail(registerDTO.getEmail());
 
         if (entity == null) {
+            System.out.println("RegisterEntity not found");
             return false;
         }
 
+        // Update user details
         entity.setName(registerDTO.getName());
         entity.setPhoneNumber(registerDTO.getPhoneNumber());
         entity.setAddress(registerDTO.getAddress());
 
+        // Update profile image if a new image is selected
+        if (registerDTO.getFile() != null &&
+                !registerDTO.getFile().isEmpty()) {
+
+            System.out.println("New profile image selected");
+
+            // Image saving logic will come here
+        }
+
         registerRepo.update(entity);
+
+        System.out.println("Profile updated successfully");
 
         return true;
     }

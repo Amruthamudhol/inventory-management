@@ -133,8 +133,7 @@ public class RegisterServiceImpl implements RegisterService {
         entity.setAddress(registerDTO.getAddress());
 
         // Update profile image if a new image is selected
-        if (registerDTO.getFile() != null &&
-                !registerDTO.getFile().isEmpty()) {
+        if (registerDTO.getFile() != null && !registerDTO.getFile().isEmpty()) {
 
             System.out.println("New profile image selected");
 

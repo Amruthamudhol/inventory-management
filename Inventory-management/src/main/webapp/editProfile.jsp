@@ -1,39 +1,86 @@
 <%@ page isELIgnored="false" %>
 
+<!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Edit Profile</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
 </head>
-<body>
 
-<h2>Edit Profile</h2>
+<body class="bg-light">
 
-<p style="color:red;">${msg}</p>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
 
-<form action="${pageContext.request.contextPath}/register/update" method="post"
-      enctype="multipart/form-data">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="text-center mb-0">Edit Profile</h3>
+                </div>
 
-    <input type="hidden" name="id" value="${registerDto.id}"></br>
+                <div class="card-body">
 
-    <input type="text" name="name"
-           value="${registerDto.name}" required>
+                    <p class="text-danger">${msg}</p>
 
-    <input type="email" name="email"
-           value="${registerDto.email}" readonly>
+                    <form action="${pageContext.request.contextPath}/register/update"
+                          method="post"
+                          enctype="multipart/form-data">
 
-    <input type="text" name="phoneNumber"
-           value="${registerDto.phoneNumber}" required>
+                        <input type="hidden" name="id"
+                               value="${registerDto.id}">
 
-    <input type="text" name="address"
-           value="${registerDto.address}" required>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control"
+                                   id="name" name="name"
+                                   value="${registerDto.name}" required>
+                        </div>
 
-    <input type="file" name="file" accept="image/*">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control"
+                                   id="email" name="email"
+                                   value="${registerDto.email}" readonly>
+                        </div>
 
-    <button type="submit">Update Profile</button>
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control"
+                                   id="phoneNumber" name="phoneNumber"
+                                   value="${registerDto.phoneNumber}" required>
+                        </div>
 
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control"
+                                      id="address" name="address"
+                                      rows="3" required>${registerDto.address}</textarea>
+                        </div>
 
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Profile Picture</label>
+                            <input type="file" class="form-control"
+                                   id="file" name="file"
+                                   accept="image/*">
+                        </div>
 
-</form>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                Update Profile
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

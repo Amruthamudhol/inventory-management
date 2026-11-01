@@ -42,4 +42,7 @@ public class RegisterEntity {
 
     @OneToOne(mappedBy = "register", cascade = CascadeType.ALL)
     private AuditEntity auditEntity;
+
+    @Column(name = "profile_image")
+    private String profileImage;
 }

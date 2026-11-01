@@ -83,6 +83,7 @@ public class RegisterRepoImpl implements RegisterRepo {
             return null;
         }
     }
+
     @Override
     public void update(RegisterEntity registerEntity) {
 
@@ -106,6 +107,13 @@ public class RegisterRepoImpl implements RegisterRepo {
             entity.setName(registerEntity.getName());
             entity.setPhoneNumber(registerEntity.getPhoneNumber());
             entity.setAddress(registerEntity.getAddress());
+
+            // Update profile image only when a new image is provided
+            if (registerEntity.getProfileImage() != null
+                    && !registerEntity.getProfileImage().isEmpty()) {
+
+                entity.setProfileImage(registerEntity.getProfileImage());
+            }
 
             // Get existing AuditEntity
             AuditEntity audit = entity.getAuditEntity();

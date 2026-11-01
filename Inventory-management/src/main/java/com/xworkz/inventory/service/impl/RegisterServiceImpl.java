@@ -5,11 +5,18 @@ import com.xworkz.inventory.dto.RegisterDTO;
 import com.xworkz.inventory.entity.RegisterEntity;
 import com.xworkz.inventory.repo.RegisterRepo;
 import com.xworkz.inventory.service.RegisterService;
+import com.xworkz.inventory.util.InventoryUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
 @AllArgsConstructor
@@ -115,34 +122,37 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     public boolean updateProfile(RegisterDTO registerDTO) {
 
-        if (registerDTO == null || registerDTO.getEmail() == null) {
+        System.out.println("RegisterServiceImpl update method is called: " + registerDTO);
+
+        if (registerDTO == null || registerDTO.getId() == 0) {
             return false;
         }
 
-        RegisterEntity entity =
-                registerRepo.findEntityByEmail(registerDTO.getEmail());
+        RegisterEntity registerEntity = new RegisterEntity();
 
-        if (entity == null) {
-            System.out.println("RegisterEntity not found");
-            return false;
+        BeanUtils.copyProperties(registerDTO, registerEntity);
+
+        MultipartFile file = registerDTO.getFile();
+
+        if (file != null && !file.isEmpty()) {
+            try {
+                String fileName = file.getOriginalFilename();
+
+                Path path = Paths.get(InventoryUtil.IMAGE_PATH + fileName);
+
+                Files.write(path, file.getBytes());
+
+                registerEntity.setProfileImage(fileName);
+                registerDTO.setProfileImage(fileName);
+
+                System.out.println("File saved successfully: " + fileName);
+
+            } catch (IOException e) {
+                throw new RuntimeException("Error saving profile image", e);
+            }
         }
 
-        // Update user details
-        entity.setName(registerDTO.getName());
-        entity.setPhoneNumber(registerDTO.getPhoneNumber());
-        entity.setAddress(registerDTO.getAddress());
-
-        // Update profile image if a new image is selected
-        if (registerDTO.getFile() != null && !registerDTO.getFile().isEmpty()) {
-
-            System.out.println("New profile image selected");
-
-            // Image saving logic will come here
-        }
-
-        registerRepo.update(entity);
-
-        System.out.println("Profile updated successfully");
+        registerRepo.update(registerEntity);
 
         return true;
     }

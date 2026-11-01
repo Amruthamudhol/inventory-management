@@ -4,10 +4,16 @@ package com.xworkz.inventory.controller;
 import com.xworkz.inventory.dto.LoginDto;
 import com.xworkz.inventory.dto.RegisterDTO;
 import com.xworkz.inventory.service.RegisterService;
+import com.xworkz.inventory.util.InventoryUtil;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.nio.file.Files;
 
 @Controller
 @RequestMapping("/register")
@@ -100,6 +106,7 @@ public class RegisterController {
         boolean updated = registerService.updateProfile(registerDTO);
 
         if (updated) {
+
             RegisterDTO updatedDTO =
                     registerService.findUserByEmail(registerDTO.getEmail());
 
@@ -113,5 +120,32 @@ public class RegisterController {
         model.addAttribute("msg", "Profile update failed!");
 
         return "editProfile";
+    }
+
+    @GetMapping("/displayImage")
+    public void displayImage(
+            @RequestParam("imageName") String imageName,
+            HttpServletResponse response) throws IOException {
+
+        System.out.println("Image name received: " + imageName);
+
+        File file = new File(InventoryUtil.IMAGE_PATH + imageName);
+
+        System.out.println("Image path: " + file.getAbsolutePath());
+        System.out.println("File exists: " + file.exists());
+
+        if (!file.exists()) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        response.setContentType("image/jpeg");
+
+        try (InputStream inputStream = new FileInputStream(file);
+             OutputStream outputStream = response.getOutputStream()) {
+
+            IOUtils.copy(inputStream, outputStream);
+            outputStream.flush();
+        }
     }
 }

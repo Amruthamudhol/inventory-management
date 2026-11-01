@@ -96,6 +96,10 @@
 <div class="container">
 
     <h2>User Dashboard</h2>
+ <img src="${pageContext.request.contextPath}/register/displayImage?imageName=${registerDto.profileImage}"
+      alt="Profile Image"
+      width="100"
+      height="100">
 
     <p class="welcome">
         Welcome, <c:out value="${registerDto.name}" />

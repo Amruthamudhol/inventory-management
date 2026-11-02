@@ -8,4 +8,5 @@ public interface RegisterRepo {
     Boolean phoneNumberExists(String phoneNumber);
     RegisterEntity findEntityByEmail(String email);
     void update(RegisterEntity registerEntity);
+
 }

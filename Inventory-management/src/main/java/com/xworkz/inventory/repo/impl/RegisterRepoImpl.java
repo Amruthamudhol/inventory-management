@@ -3,6 +3,8 @@ package com.xworkz.inventory.repo.impl;
 import com.xworkz.inventory.entity.AuditEntity;
 import com.xworkz.inventory.entity.RegisterEntity;
 import com.xworkz.inventory.repo.RegisterRepo;
+import com.xworkz.inventory.service.EmailService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,9 @@ public class RegisterRepoImpl implements RegisterRepo {
 
     @PersistenceUnit
     private EntityManagerFactory emf;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public void save(RegisterEntity registerEntity) {
@@ -154,4 +159,6 @@ public class RegisterRepoImpl implements RegisterRepo {
             manager.close();
         }
     }
+
+
 }

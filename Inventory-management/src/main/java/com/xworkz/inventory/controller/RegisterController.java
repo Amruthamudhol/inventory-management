@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.nio.file.Files;
+
 
 @Controller
 @RequestMapping("/register")
@@ -102,13 +102,11 @@ public class RegisterController {
     public String updateProfile(@ModelAttribute RegisterDTO registerDTO, Model model) {
 
         System.out.println("Form Data: " + registerDTO);
-
         boolean updated = registerService.updateProfile(registerDTO);
 
         if (updated) {
 
-            RegisterDTO updatedDTO =
-                    registerService.findUserByEmail(registerDTO.getEmail());
+            RegisterDTO updatedDTO = registerService.findUserByEmail(registerDTO.getEmail());
 
             model.addAttribute("registerDto", updatedDTO);
             model.addAttribute("msg", "Profile updated successfully!");
@@ -123,12 +121,9 @@ public class RegisterController {
     }
 
     @GetMapping("/displayImage")
-    public void displayImage(
-            @RequestParam("imageName") String imageName,
-            HttpServletResponse response) throws IOException {
+    public void displayImage(@RequestParam("imageName") String imageName, HttpServletResponse response) throws IOException {
 
         System.out.println("Image name received: " + imageName);
-
         File file = new File(InventoryUtil.IMAGE_PATH + imageName);
 
         System.out.println("Image path: " + file.getAbsolutePath());
@@ -147,5 +142,21 @@ public class RegisterController {
             IOUtils.copy(inputStream, outputStream);
             outputStream.flush();
         }
+    }
+
+    @GetMapping("/userLogin")
+    public String userLogin() {
+        return "emailLogin";
+    }
+
+    @PostMapping("/emailLogin")
+    public String emailLogin(@RequestParam("email") String email, Model model) {
+        System.out.println("Email to send: " + email);
+
+        registerService.sendEmail(email);
+
+        model.addAttribute("successMessage", "OTP sent successfully to your email!");
+
+        return "emailLogin";
     }
 }

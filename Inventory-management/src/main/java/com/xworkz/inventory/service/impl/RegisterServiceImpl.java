@@ -4,6 +4,7 @@ import com.xworkz.inventory.dto.LoginDto;
 import com.xworkz.inventory.dto.RegisterDTO;
 import com.xworkz.inventory.entity.RegisterEntity;
 import com.xworkz.inventory.repo.RegisterRepo;
+import com.xworkz.inventory.service.EmailService;
 import com.xworkz.inventory.service.RegisterService;
 import com.xworkz.inventory.util.InventoryUtil;
 import lombok.AllArgsConstructor;
@@ -23,8 +24,12 @@ import java.nio.file.Paths;
 public class RegisterServiceImpl implements RegisterService {
 
     @Autowired
+    private EmailService emailService;
+
+    @Autowired
     private RegisterRepo registerRepo;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
     @Override
     public String save(RegisterDTO registerDTO) {
@@ -123,23 +128,18 @@ public class RegisterServiceImpl implements RegisterService {
     public boolean updateProfile(RegisterDTO registerDTO) {
 
         System.out.println("RegisterServiceImpl update method is called: " + registerDTO);
-
         if (registerDTO == null || registerDTO.getId() == 0) {
             return false;
         }
 
         RegisterEntity registerEntity = new RegisterEntity();
-
         BeanUtils.copyProperties(registerDTO, registerEntity);
-
         MultipartFile file = registerDTO.getFile();
 
         if (file != null && !file.isEmpty()) {
             try {
                 String fileName = file.getOriginalFilename();
-
                 Path path = Paths.get(InventoryUtil.IMAGE_PATH + fileName);
-
                 Files.write(path, file.getBytes());
 
                 registerEntity.setProfileImage(fileName);
@@ -153,7 +153,6 @@ public class RegisterServiceImpl implements RegisterService {
         }
 
         registerRepo.update(registerEntity);
-
         return true;
     }
 
@@ -171,6 +170,20 @@ public class RegisterServiceImpl implements RegisterService {
         dto.setPassword(null);
 
         return dto;
+    }
+
+
+    @Override
+    public void sendEmail(String email) {
+        System.out.println("RegisterServiceImpl sendEmail method is called " + email);
+
+        if (email != null) {
+            String otp = InventoryUtil.generateOtp();
+
+            emailService.sendEmail(email, otp);
+
+            System.out.println("OTP sent successfully");
+        }
     }
 }
 

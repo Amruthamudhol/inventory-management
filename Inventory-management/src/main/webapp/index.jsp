@@ -191,6 +191,15 @@
                     </a>
                 </li>
 
+                 <li class="nav-item">
+                     <a class="btn btn-primary"
+                           <a href="${pageContext.request.contextPath}/register/userLogin">
+                               Email Login
+                           </a>
+
+
+                  </li>
+
             </ul>
         </div>
     </div>

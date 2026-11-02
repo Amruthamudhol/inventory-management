@@ -41,32 +41,33 @@ public class RegisterServiceImpl implements RegisterService {
             return "Invalid registration details";
         }
 
-        System.out.println("Saving RegisterDTO");
-
         // Check email
         if (registerRepo.emailExists(registerDTO.getEmail())) {
-            System.out.println("Email Id Already Exist");
             return "Email Id Already Exist";
         }
 
         // Check phone number
         if (registerRepo.phoneNumberExists(registerDTO.getPhoneNumber())) {
-            System.out.println("Phone Number Already Exist");
             return "Phone Number Already Exist";
         }
 
         RegisterEntity registerEntity = new RegisterEntity();
 
-        String encodedPassword = bCryptPasswordEncoder.encode(registerDTO.getPassword());
+        String encodedPassword =
+                bCryptPasswordEncoder.encode(registerDTO.getPassword());
 
         registerDTO.setPassword(encodedPassword);
+
+        // Set default profile image
+        registerDTO.setProfileImage("default.png");
+
         BeanUtils.copyProperties(registerDTO, registerEntity);
 
         registerRepo.save(registerEntity);
         System.out.println("Registration successful");
-
         return "Registration Successful";
     }
+
 
     @Override
     public String findEmail(String email) {

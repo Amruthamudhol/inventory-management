@@ -12,15 +12,22 @@ public class EmailServiceImpl implements EmailService {
     private final EmailConfig emailConfig;
 
     @Override
-    public void sendEmail(String email, String otp) {
-        SimpleMailMessage message = new SimpleMailMessage();
+    public Boolean sendEmail(String email, String otp) {
 
-        message.setTo(email);
-        message.setSubject("OTP for Email Verification");
-        message.setText("Your OTP is: " + otp);
+        if (email != null && otp != null) {
+            SimpleMailMessage message = new SimpleMailMessage();
 
-        emailConfig.mailSender().send(message);
+            message.setTo(email);
+            message.setSubject("OTP for Email Verification");
+            message.setText("Your OTP is: " + otp);
 
-        System.out.println("OTP sent successfully " + email + " " + otp);
+            emailConfig.mailSender().send(message);
+
+            System.out.println("Email sent successfully " + email + " " + otp);
+
+            return true;
+        }
+
+        return false;
     }
 }

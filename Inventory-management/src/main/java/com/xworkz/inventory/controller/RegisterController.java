@@ -157,6 +157,25 @@ public class RegisterController {
 
         model.addAttribute("successMessage", "OTP sent successfully to your email!");
 
-        return "emailLogin";
+        return "Otp";
+    }
+
+    @PostMapping("/validateOtp")
+    public String validateOtp(@RequestParam("email") String email,
+                              @RequestParam("otp") String otp,
+                              Model model) {
+
+        System.out.println("Otp to validate: " + otp);
+
+        RegisterDTO registerDTO = registerService.validateOtp(email, otp);
+
+        if (registerDTO != null) {
+            model.addAttribute("registerDto", registerDTO);
+            return "dashboard";
+        } else {
+            model.addAttribute("msg", "Invalid OTP");
+            model.addAttribute("email", email);
+            return "otp";
+        }
     }
 }

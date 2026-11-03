@@ -16,6 +16,7 @@ public interface RegisterService {
 
     RegisterDTO findUserByEmail(String email);
 
-    void sendEmail(String email);
+    Boolean sendEmail(String email);
+    RegisterDTO validateOtp(String email, String otp);
 }
 

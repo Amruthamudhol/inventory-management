@@ -175,16 +175,51 @@ public class RegisterServiceImpl implements RegisterService {
 
 
     @Override
-    public void sendEmail(String email) {
+    public Boolean sendEmail(String email) {
         System.out.println("RegisterServiceImpl sendEmail method is called " + email);
 
         if (email != null) {
-            String otp = InventoryUtil.generateOtp();
+            Boolean isCheck = registerRepo.emailExists(email);
 
-            emailService.sendEmail(email, otp);
+            if (isCheck) {
 
-            System.out.println("OTP sent successfully");
+                String otp = InventoryUtil.generateOtp();
+                Boolean isSent = emailService.sendEmail(email, otp);
+
+                if (isSent) {
+                    Boolean isSaved = registerRepo.saveOtp(email, otp);
+                    if (isSaved) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
         }
+        return false;
+    }
+
+
+    @Override
+    public RegisterDTO validateOtp(String email, String otp) {
+
+        System.out.println("Invoking validateOtp: " + email + " " + otp);
+        RegisterDTO registerDTO = null;
+        if (email != null && otp != null) {
+
+            RegisterEntity entity = registerRepo.findEntityByEmail(email);
+
+            if (entity != null) {
+                if (entity.getOtp().equals(otp)) {
+                    registerDTO = new RegisterDTO();
+                    BeanUtils.copyProperties(entity, registerDTO);
+                }
+            }
+        }
+
+        return registerDTO;
     }
 }
 

@@ -151,19 +151,23 @@ public class RegisterController {
 
     @PostMapping("/emailLogin")
     public String emailLogin(@RequestParam("email") String email, Model model) {
-        System.out.println("Email to send: " + email);
 
-        registerService.sendEmail(email);
+        System.out.println("Email to login: " + email);
 
-        model.addAttribute("successMessage", "OTP sent successfully to your email!");
+        Boolean isSent = registerService.sendEmail(email);
 
-        return "Otp";
+        if (isSent) {
+            System.out.println("Controller otp sent");
+            model.addAttribute("email", email);
+            return "Otp";
+        } else {
+            System.out.println("Controller not otp sent");
+            model.addAttribute("msg", "Email not found");
+            return "emailLogin";
+        }
     }
-
     @PostMapping("/validateOtp")
-    public String validateOtp(@RequestParam("email") String email,
-                              @RequestParam("otp") String otp,
-                              Model model) {
+    public String validateOtp(@RequestParam("email") String email, @RequestParam("otp") String otp, Model model) {
 
         System.out.println("Otp to validate: " + otp);
 
@@ -175,7 +179,7 @@ public class RegisterController {
         } else {
             model.addAttribute("msg", "Invalid OTP");
             model.addAttribute("email", email);
-            return "otp";
+            return "Otp";
         }
     }
 }

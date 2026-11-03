@@ -14,6 +14,7 @@ import javax.persistence.*;
 
 @NamedQuery(name = "getEmailId", query = "SELECT e FROM RegisterEntity e WHERE e.email = :email")
 @NamedQuery(name = "findpno", query = "SELECT e FROM RegisterEntity e WHERE e.phoneNumber = :phoneNumber")
+@NamedQuery(name = "updatingOtpByEmail", query = "UPDATE RegisterEntity e SET e.otp = :otp WHERE e.email = :email")
 
 public class RegisterEntity {
 

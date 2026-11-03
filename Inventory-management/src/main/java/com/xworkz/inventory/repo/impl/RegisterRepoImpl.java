@@ -160,5 +160,35 @@ public class RegisterRepoImpl implements RegisterRepo {
         }
     }
 
+    @Override
+    public Boolean saveOtp(String email, String otp) {
 
+        EntityManager manager = emf.createEntityManager();
+        EntityTransaction transaction = manager.getTransaction();
+
+        try {
+            transaction.begin();
+
+            int result = manager.createNamedQuery("updatingOtpByEmail")
+                    .setParameter("otp", otp)
+                    .setParameter("email", email)
+                    .executeUpdate();
+
+            transaction.commit();
+
+            return result > 0;
+
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+
+        } finally {
+            manager.close();
+        }
+
+        return false;
+    }
 }

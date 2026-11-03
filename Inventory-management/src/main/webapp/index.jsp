@@ -185,16 +185,16 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="btn btn-primary"
+                    <a class="nav-link"
                        href="${pageContext.request.contextPath}/register/loginPage">
-                        Login
+                        admin
                     </a>
                 </li>
 
                  <li class="nav-item">
                      <a class="btn btn-primary"
                            <a href="${pageContext.request.contextPath}/register/userLogin">
-                               Email Login
+                               User Login
                            </a>
 
 

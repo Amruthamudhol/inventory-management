@@ -1,5 +1,6 @@
 package com.xworkz.inventory.configuration;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
+@Slf4j
 @PropertySource("classpath:application.properties")
 public class DatabaseConfiguration {
 
@@ -25,12 +27,12 @@ public class DatabaseConfiguration {
     private Environment environment;
 
     public DatabaseConfiguration() {
-        System.out.println("Created DatabaseConfiguration");
+        log.info("Created DatabaseConfiguration");
     }
 
     @Bean
     public DataSource dataSource() {
-        System.out.println("Running dataSource() in DatabaseConfiguration");
+        log.info("Running dataSource() in DatabaseConfiguration");
 
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
@@ -55,7 +57,7 @@ public class DatabaseConfiguration {
 
     @Bean
     public Properties properties() {
-        System.out.println("Running properties() in DatabaseConfiguration");
+        log.info("Running properties() in DatabaseConfiguration");
 
         Properties properties = new Properties();
 
@@ -82,22 +84,17 @@ public class DatabaseConfiguration {
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean(
-            DataSource dataSource) {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean(DataSource dataSource) {
 
-        System.out.println(
-                "Running entityManagerFactoryBean() in DatabaseConfiguration");
+        log.info("Running entityManagerFactoryBean() in DatabaseConfiguration");
 
-        LocalContainerEntityManagerFactoryBean factoryBean =
-                new LocalContainerEntityManagerFactoryBean();
+        LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
 
         factoryBean.setDataSource(dataSource);
 
-        factoryBean.setPackagesToScan(
-                "com.xworkz.inventory.entity");
+        factoryBean.setPackagesToScan("com.xworkz.inventory.entity");
 
-        factoryBean.setJpaVendorAdapter(
-                new HibernateJpaVendorAdapter());
+        factoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
         factoryBean.setJpaProperties(properties());
 
@@ -105,17 +102,13 @@ public class DatabaseConfiguration {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(
-            EntityManagerFactory entityManagerFactory) {
+    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
 
-        System.out.println(
-                "Running transactionManager() in DatabaseConfiguration");
+        log.info("Running transactionManager() in DatabaseConfiguration");
 
-        JpaTransactionManager transactionManager =
-                new JpaTransactionManager();
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
 
-        transactionManager.setEntityManagerFactory(
-                entityManagerFactory);
+        transactionManager.setEntityManagerFactory(entityManagerFactory);
 
         return transactionManager;
     }

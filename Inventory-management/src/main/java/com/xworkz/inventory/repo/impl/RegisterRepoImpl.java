@@ -4,6 +4,7 @@ import com.xworkz.inventory.entity.AuditEntity;
 import com.xworkz.inventory.entity.RegisterEntity;
 import com.xworkz.inventory.repo.RegisterRepo;
 import com.xworkz.inventory.service.EmailService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Repository
 @Transactional
+@Slf4j
 public class RegisterRepoImpl implements RegisterRepo {
 
     @PersistenceContext
@@ -28,7 +30,7 @@ public class RegisterRepoImpl implements RegisterRepo {
     @Override
     public void save(RegisterEntity registerEntity) {
 
-        System.out.println("RegisterRepoImpl save method is called");
+        log.info("RegisterRepoImpl save method is called");
 
         AuditEntity auditEntity = new AuditEntity();
 
@@ -40,20 +42,20 @@ public class RegisterRepoImpl implements RegisterRepo {
 
         entityManager.persist(registerEntity);
 
-        System.out.println("Data saved to DB: " + registerEntity.getName());
+        log.info("Data saved to DB: " + registerEntity.getName());
     }
 
     @Override
     public Boolean emailExists(String email) {
 
-        System.out.println("Checking email: [" + email + "]");
+        log.info("Checking email: [" + email + "]");
 
         List<?> result = entityManager
                 .createQuery("SELECT e FROM RegisterEntity e WHERE e.email = :email")
                 .setParameter("email", email.trim())
                 .getResultList();
 
-        System.out.println("Records found: " + result.size());
+        log.info("Records found: " + result.size());
 
         return !result.isEmpty();
     }
@@ -75,7 +77,7 @@ public class RegisterRepoImpl implements RegisterRepo {
     @Override
     public RegisterEntity findEntityByEmail(String email) {
 
-        System.out.println("Finding email: [" + email + "]");
+        log.info("Finding email: [" + email + "]");
 
         try {
             return (RegisterEntity) entityManager
@@ -84,7 +86,7 @@ public class RegisterRepoImpl implements RegisterRepo {
                     .getSingleResult();
 
         } catch (javax.persistence.NoResultException e) {
-            System.out.println("Email not found in database");
+            log.error("Email not found in database");
             return null;
         }
     }
@@ -145,7 +147,7 @@ public class RegisterRepoImpl implements RegisterRepo {
             // Commit transaction
             transaction.commit();
 
-            System.out.println("RegisterEntity updated successfully");
+            log.info("RegisterEntity updated successfully");
 
         } catch (Exception e) {
 

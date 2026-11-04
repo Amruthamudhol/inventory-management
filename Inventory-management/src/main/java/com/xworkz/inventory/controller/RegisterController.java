@@ -72,7 +72,7 @@ public class RegisterController {
     public String login(LoginDto loginDto, Model model) {
         log.info("Login method is called: " + loginDto);
         RegisterDTO dto = registerService.checkUserBylogin(loginDto);
-        System.out.println("DTO: " + dto);
+        log.info("DTO: " + dto);
 
         if (dto != null) {
             model.addAttribute("registerDto", dto);
@@ -159,11 +159,11 @@ public class RegisterController {
         Boolean isSent = registerService.sendEmail(email);
 
         if (isSent) {
-            System.out.println("Controller otp sent");
+           log.info("Controller otp sent");
             model.addAttribute("email", email);
             return "Otp";
         } else {
-            System.out.println("Controller not otp sent");
+            log.error("Controller not otp sent");
             model.addAttribute("msg", "Email not found");
             return "emailLogin";
         }
@@ -171,7 +171,7 @@ public class RegisterController {
     @PostMapping("/validateOtp")
     public String validateOtp(@RequestParam("email") String email, @RequestParam("otp") String otp, Model model) {
 
-        System.out.println("Otp to validate: " + otp);
+        log.info("Otp to validate: " + otp);
 
         RegisterDTO registerDTO = registerService.validateOtp(email, otp);
 

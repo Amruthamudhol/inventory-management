@@ -8,6 +8,7 @@ import com.xworkz.inventory.service.EmailService;
 import com.xworkz.inventory.service.RegisterService;
 import com.xworkz.inventory.util.InventoryUtil;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,6 +22,7 @@ import java.nio.file.Paths;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class RegisterServiceImpl implements RegisterService {
 
     @Autowired
@@ -34,8 +36,8 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     public String save(RegisterDTO registerDTO) {
 
-        System.out.println("Running save() in RegisterServiceImpl");
-        System.out.println("RegisterDTO: " + registerDTO);
+        log.info("Running save() in RegisterServiceImpl");
+        log.info("RegisterDTO: " + registerDTO);
 
         if (registerDTO == null) {
             return "Invalid registration details";
@@ -64,7 +66,7 @@ public class RegisterServiceImpl implements RegisterService {
         BeanUtils.copyProperties(registerDTO, registerEntity);
 
         registerRepo.save(registerEntity);
-        System.out.println("Registration successful");
+        log.info("Registration successful");
         return "Registration Successful";
     }
 

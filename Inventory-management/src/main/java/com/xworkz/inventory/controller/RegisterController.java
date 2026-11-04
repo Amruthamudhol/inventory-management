@@ -5,6 +5,7 @@ import com.xworkz.inventory.dto.LoginDto;
 import com.xworkz.inventory.dto.RegisterDTO;
 import com.xworkz.inventory.service.RegisterService;
 import com.xworkz.inventory.util.InventoryUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,7 @@ import java.io.*;
 
 
 @Controller
+@Slf4j
 @RequestMapping("/register")
 public class RegisterController {
 
@@ -23,7 +25,7 @@ public class RegisterController {
     private RegisterService registerService;
 
     public RegisterController() {
-        System.out.println("Created RegisterController()");
+        log.info("Created RegisterController()");
     }
 
     @GetMapping("/")
@@ -43,8 +45,8 @@ public class RegisterController {
     @PostMapping("/saveRegisterForm")
     public String saveRegisterForm(RegisterDTO registerDTO, Model model) {
 
-        System.out.println("Running saveRegisterForm()");
-        System.out.println("RegisterDTO: " + registerDTO);
+        log.info("Running saveRegisterForm()");
+        log.info("RegisterDTO: " + registerDTO);
 
         String message = registerService.save(registerDTO);
 
@@ -68,7 +70,7 @@ public class RegisterController {
     // Process login form
     @PostMapping("/login")
     public String login(LoginDto loginDto, Model model) {
-        System.out.println("Login method is called: " + loginDto);
+        log.info("Login method is called: " + loginDto);
         RegisterDTO dto = registerService.checkUserBylogin(loginDto);
         System.out.println("DTO: " + dto);
 
@@ -86,7 +88,7 @@ public class RegisterController {
 
     @GetMapping("/edit")
     public String editProfile(@RequestParam("email") String email, Model model) {
-        System.out.println("Edit method is called: " + email);
+        log.info("Edit method is called: " + email);
         RegisterDTO dto = registerService.findUserByEmail(email);
 
         if (dto == null) {
@@ -101,7 +103,7 @@ public class RegisterController {
     @PostMapping("/update")
     public String updateProfile(@ModelAttribute RegisterDTO registerDTO, Model model) {
 
-        System.out.println("Form Data: " + registerDTO);
+        log.info("Form Data: " + registerDTO);
         boolean updated = registerService.updateProfile(registerDTO);
 
         if (updated) {
@@ -123,11 +125,11 @@ public class RegisterController {
     @GetMapping("/displayImage")
     public void displayImage(@RequestParam("imageName") String imageName, HttpServletResponse response) throws IOException {
 
-        System.out.println("Image name received: " + imageName);
+        log.info("Image name received: " + imageName);
         File file = new File(InventoryUtil.IMAGE_PATH + imageName);
 
-        System.out.println("Image path: " + file.getAbsolutePath());
-        System.out.println("File exists: " + file.exists());
+        log.info("Image path: " + file.getAbsolutePath());
+        log.info("File exists: " + file.exists());
 
         if (!file.exists()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -152,7 +154,7 @@ public class RegisterController {
     @PostMapping("/emailLogin")
     public String emailLogin(@RequestParam("email") String email, Model model) {
 
-        System.out.println("Email to login: " + email);
+        log.info("Email to login: " + email);
 
         Boolean isSent = registerService.sendEmail(email);
 

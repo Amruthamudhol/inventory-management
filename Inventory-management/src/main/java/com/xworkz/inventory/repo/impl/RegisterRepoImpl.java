@@ -100,12 +100,10 @@ public class RegisterRepoImpl implements RegisterRepo {
         try {
             transaction.begin();
 
-            // Find existing RegisterEntity
-            RegisterEntity entity =
-                    manager.find(RegisterEntity.class, registerEntity.getId());
+            RegisterEntity entity = manager.find(RegisterEntity.class, registerEntity.getId());
 
             if (entity == null) {
-                System.out.println("RegisterEntity not found");
+                log.warn("RegisterEntity not found");
                 transaction.rollback();
                 return;
             }
@@ -115,52 +113,37 @@ public class RegisterRepoImpl implements RegisterRepo {
             entity.setPhoneNumber(registerEntity.getPhoneNumber());
             entity.setAddress(registerEntity.getAddress());
 
-            entity.setResetToken(registerEntity.getResetToken());
-            entity.setResetTokenExpiry(registerEntity.getResetTokenExpiry());
-
-            // Update profile image only when a new image is provided
-            if (registerEntity.getProfileImage() != null
-                    && !registerEntity.getProfileImage().isEmpty()) {
+            if (registerEntity.getProfileImage() != null && !registerEntity.getProfileImage().isEmpty()) {
                 entity.setProfileImage(registerEntity.getProfileImage());
             }
 
+            // Update reset-password token
+            entity.setResetToken(registerEntity.getResetToken());
+            entity.setResetTokenExpiry(registerEntity.getResetTokenExpiry());
+
             // Update login security fields
-            entity.setAttempts(registerEntity.getAttempts() == null
-                    ? 0
-                    : registerEntity.getAttempts());
+            if (registerEntity.getAttempts() != null) {
+                entity.setAttempts(registerEntity.getAttempts());
+            }
 
             entity.setBlocked(registerEntity.isBlocked());
 
-            // Get existing AuditEntity
+            // Update audit information
             AuditEntity audit = entity.getAuditEntity();
 
-            if (audit == null) {
-                audit = new AuditEntity();
-
-                audit.setCreatedBy(entity.getName());
-                audit.setCreatedAt(LocalDateTime.now());
-
-                audit.setRegister(entity);
-                entity.setAuditEntity(audit);
-
-                manager.persist(audit);
+            if (audit != null) {
+                audit.setUpdatedBy(entity.getName());
+                audit.setUpdatedAt(LocalDateTime.now());
             }
 
-            // Update audit information
-            audit.setUpdatedBy(entity.getName());
-            audit.setUpdatedAt(LocalDateTime.now());
-
             transaction.commit();
-
             log.info("RegisterEntity updated successfully");
 
         } catch (Exception e) {
-
             if (transaction.isActive()) {
                 transaction.rollback();
             }
-
-            e.printStackTrace();
+            log.error("Error updating RegisterEntity", e);
 
         } finally {
             manager.close();

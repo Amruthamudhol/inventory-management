@@ -49,4 +49,7 @@ public class RegisterEntity {
 
     @Column(name = "otp")
     private String otp;
+
+    @Column(name = "attempts")
+    private int attempts;
 }

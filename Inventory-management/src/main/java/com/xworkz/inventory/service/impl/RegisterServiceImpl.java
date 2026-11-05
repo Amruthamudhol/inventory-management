@@ -13,16 +13,20 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
 @Slf4j
+@Transactional
 public class RegisterServiceImpl implements RegisterService {
 
     @Autowired
@@ -97,35 +101,66 @@ public class RegisterServiceImpl implements RegisterService {
 
     @Override
     public RegisterDTO checkUserBylogin(LoginDto loginDto) {
+
         System.out.println("Running checkUserByLogin()");
 
         if (loginDto == null) {
             return null;
         }
 
-        RegisterEntity entity = registerRepo.findEntityByEmail(loginDto.getEmail());
+        RegisterEntity entity =
+                registerRepo.findEntityByEmail(loginDto.getEmail());
 
         if (entity == null) {
-            System.out.println("Email not found in database");
+            System.out.println("Email not found");
             return null;
         }
 
-        // Use this if the stored password is BCrypt encoded
+        // Check if account is already blocked
+        if (entity.isBlocked()) {
+            System.out.println("Account is blocked");
+            return null;
+        }
+
         boolean matched = bCryptPasswordEncoder.matches(
                 loginDto.getPassword(),
                 entity.getPassword()
         );
 
         if (matched) {
+
+            entity.setAttempts(0);
+            registerRepo.update(entity);
+
             RegisterDTO dto = new RegisterDTO();
             BeanUtils.copyProperties(entity, dto);
+
             return dto;
+
+        } else {
+
+            // Read the existing attempts count
+            int attempts = entity.getAttempts() == null
+                    ? 0
+                    : entity.getAttempts();
+
+            // Increment failed attempts
+            attempts++;
+            entity.setAttempts(attempts);
+
+            System.out.println("Failed attempts: " + attempts);
+
+            // Block after 3 incorrect passwords
+            if (attempts >= 3) {
+                entity.setBlocked(true);
+                System.out.println("Account blocked. Reset password required.");
+            }
+
+            registerRepo.update(entity);
+
+            return null;
         }
-
-        System.out.println("Password does not match");
-        return null;
     }
-
 
     @Override
     public boolean updateProfile(RegisterDTO registerDTO) {
@@ -222,6 +257,63 @@ public class RegisterServiceImpl implements RegisterService {
         }
 
         return registerDTO;
+    }
+
+    @Override
+    public boolean sendResetLink(String email) {
+        RegisterEntity entity = registerRepo.findEntityByEmail(email);
+
+        if (entity == null) {
+            log.warn("Email not found: {}", email);
+            return false;
+        }
+
+        String token = InventoryUtil.generateResetToken();
+
+        entity.setResetToken(token);
+        entity.setResetTokenExpiry(LocalDateTime.now().plusMinutes(15));
+        registerRepo.update(entity);
+
+        String resetUrl =
+                "http://localhost:8080/Inventory-management/register/resetPassword?token=" + token;
+
+        String body = "Click the link below to reset your password:\n" + resetUrl
+                + "\nThis link expires in 15 minutes.";
+
+        return emailService.sendEmail(
+                email,
+                "Password Reset",
+                body
+        );
+    }
+
+    @Override
+    public boolean resetPassword(String token, String newPassword) {
+
+        RegisterEntity entity = registerRepo.findEntityByResetToken(token);
+
+        if (entity == null) {
+            return false;
+        }
+
+        // Check token expiry
+        if (entity.getResetTokenExpiry() == null
+                || entity.getResetTokenExpiry().isBefore(LocalDateTime.now())) {
+            return false;
+        }
+
+        // Update password and unblock account
+        entity.setPassword(bCryptPasswordEncoder.encode(newPassword));
+        entity.setAttempts(0);
+        entity.setBlocked(false);
+
+        // Invalidate token so it cannot be reused
+        entity.setResetToken(null);
+        entity.setResetTokenExpiry(null);
+
+        registerRepo.update(entity);
+
+        return true;
     }
 }
 

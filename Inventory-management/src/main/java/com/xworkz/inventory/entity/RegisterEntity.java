@@ -3,6 +3,7 @@ package com.xworkz.inventory.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -51,5 +52,14 @@ public class RegisterEntity {
     private String otp;
 
     @Column(name = "attempts")
-    private int attempts;
+    private Integer attempts = 0;
+
+    @Column(name = "is_blocked")
+    private boolean blocked = false;
+
+    @Column(name = "reset_token")
+    private String resetToken;
+
+    @Column(name = "reset_token_expiry")
+    private LocalDateTime resetTokenExpiry;
 }

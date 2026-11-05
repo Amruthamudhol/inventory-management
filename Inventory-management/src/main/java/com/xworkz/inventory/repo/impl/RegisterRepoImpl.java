@@ -110,30 +110,36 @@ public class RegisterRepoImpl implements RegisterRepo {
                 return;
             }
 
-            // Update RegisterEntity details
+            // Update profile details
             entity.setName(registerEntity.getName());
             entity.setPhoneNumber(registerEntity.getPhoneNumber());
             entity.setAddress(registerEntity.getAddress());
 
+            entity.setResetToken(registerEntity.getResetToken());
+            entity.setResetTokenExpiry(registerEntity.getResetTokenExpiry());
+
             // Update profile image only when a new image is provided
             if (registerEntity.getProfileImage() != null
                     && !registerEntity.getProfileImage().isEmpty()) {
-
                 entity.setProfileImage(registerEntity.getProfileImage());
             }
+
+            // Update login security fields
+            entity.setAttempts(registerEntity.getAttempts() == null
+                    ? 0
+                    : registerEntity.getAttempts());
+
+            entity.setBlocked(registerEntity.isBlocked());
 
             // Get existing AuditEntity
             AuditEntity audit = entity.getAuditEntity();
 
             if (audit == null) {
-
-                // Create new AuditEntity
                 audit = new AuditEntity();
 
                 audit.setCreatedBy(entity.getName());
                 audit.setCreatedAt(LocalDateTime.now());
 
-                // Establish relationship
                 audit.setRegister(entity);
                 entity.setAuditEntity(audit);
 
@@ -144,7 +150,6 @@ public class RegisterRepoImpl implements RegisterRepo {
             audit.setUpdatedBy(entity.getName());
             audit.setUpdatedAt(LocalDateTime.now());
 
-            // Commit transaction
             transaction.commit();
 
             log.info("RegisterEntity updated successfully");
@@ -192,5 +197,23 @@ public class RegisterRepoImpl implements RegisterRepo {
         }
 
         return false;
+    }
+
+    @Override
+    public RegisterEntity findEntityByResetToken(String resetToken) {
+
+        EntityManager manager = emf.createEntityManager();
+
+        try {
+            return manager.createQuery("SELECT r FROM RegisterEntity r WHERE r.resetToken = :token", RegisterEntity.class)
+                    .setParameter("token", resetToken)
+                    .getSingleResult();
+
+        } catch (NoResultException e) {
+            return null;
+
+        } finally {
+            manager.close();
+        }
     }
 }

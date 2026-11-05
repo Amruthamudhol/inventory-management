@@ -3,6 +3,7 @@ package com.xworkz.inventory.controller;
 
 import com.xworkz.inventory.dto.LoginDto;
 import com.xworkz.inventory.dto.RegisterDTO;
+import com.xworkz.inventory.entity.RegisterEntity;
 import com.xworkz.inventory.service.RegisterService;
 import com.xworkz.inventory.util.InventoryUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -70,8 +71,11 @@ public class RegisterController {
     // Process login form
     @PostMapping("/login")
     public String login(LoginDto loginDto, Model model) {
+
         log.info("Login method is called: " + loginDto);
+
         RegisterDTO dto = registerService.checkUserBylogin(loginDto);
+
         log.info("DTO: " + dto);
 
         if (dto != null) {
@@ -79,8 +83,17 @@ public class RegisterController {
             return "dashboard";
         }
 
-        model.addAttribute("msg", "Login Failed. Please check your email and password.");
         model.addAttribute("loginDto", loginDto);
+        model.addAttribute("msg",
+                "Login Failed. Please check your email and password.");
+
+        RegisterDTO userDTO = registerService.findUserByEmail(loginDto.getEmail());
+
+        if (userDTO != null && userDTO.isBlocked()) {
+            model.addAttribute("showResetPassword", true);
+            model.addAttribute("msg",
+                    "Your account is blocked. Please reset your password.");
+        }
 
         return "login";
     }
@@ -183,5 +196,55 @@ public class RegisterController {
             model.addAttribute("email", email);
             return "Otp";
         }
+    }
+
+
+
+    @GetMapping("/forgotPassword")
+    public String forgotPassword() {
+        return "forgotPassword";
+    }
+
+    @PostMapping("/sendResetLink")
+    @ResponseBody
+    public String sendResetLink(@RequestParam("email") String email) {
+
+        log.info("sendResetLink controller reached. Email: {}", email);
+
+        boolean sent = registerService.sendResetLink(email);
+
+        return sent
+                ? "Reset link sent to your email."
+                : "Unable to send reset link.";
+    }
+
+    @GetMapping("/resetPassword")
+    public String resetPasswordPage(@RequestParam("token") String token,
+                                    Model model) {
+
+        model.addAttribute("token", token);
+        return "resetPassword";
+    }
+
+    @PostMapping("/resetPassword")
+    public String resetPassword(@RequestParam("token") String token, @RequestParam("password") String password, @RequestParam("confirmPassword") String confirmPassword, Model model) {
+
+        if (!password.equals(confirmPassword)) {
+            model.addAttribute("token", token);
+            model.addAttribute("msg", "Passwords do not match.");
+            return "resetPassword";
+        }
+
+        boolean updated = registerService.resetPassword(token, password);
+
+        if (updated) {
+            model.addAttribute("msg",
+                    "Password reset successfully. Please login.");
+            return "login";
+        }
+
+        model.addAttribute("msg", "Reset link is invalid or expired. Please request a new link.");
+
+        return "forgotPassword";
     }
 }

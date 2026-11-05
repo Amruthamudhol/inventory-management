@@ -32,4 +32,25 @@ public class EmailServiceImpl implements EmailService {
 
         return false;
     }
+
+    @Override
+    public Boolean sendEmail(String email, String subject, String body) {
+
+        if (email != null && subject != null && body != null) {
+
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setTo(email);
+            message.setSubject(subject);
+            message.setText(body);
+
+            emailConfig.mailSender().send(message);
+
+            log.info("Password reset email sent successfully to {}", email);
+
+            return true;
+        }
+
+        return false;
+    }
 }

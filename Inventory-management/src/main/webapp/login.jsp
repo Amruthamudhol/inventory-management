@@ -157,6 +157,16 @@
         </a>
     </div>
 
+    <c:if test="${showResetPassword}">
+        <p style="color: red;">
+            Your login failed or your account is blocked.
+        </p>
+
+        <a href="${pageContext.request.contextPath}/register/forgotPassword">
+            Forgot Password / Reset Password
+        </a>
+    </c:if>
+
 </div>
 
 <script>

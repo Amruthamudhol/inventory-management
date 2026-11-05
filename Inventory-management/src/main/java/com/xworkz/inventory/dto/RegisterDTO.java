@@ -43,4 +43,6 @@ public class RegisterDTO {
     private MultipartFile file;
 
     private String profileImage;
+
+    private boolean blocked;
 }

@@ -18,5 +18,9 @@ public interface RegisterService {
 
     Boolean sendEmail(String email);
     RegisterDTO validateOtp(String email, String otp);
+
+
+    boolean sendResetLink(String email);
+    boolean resetPassword(String token, String newPassword);
 }
 

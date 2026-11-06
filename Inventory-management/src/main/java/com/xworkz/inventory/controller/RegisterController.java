@@ -208,19 +208,13 @@ public class RegisterController {
     @PostMapping("/sendResetLink")
     @ResponseBody
     public String sendResetLink(@RequestParam("email") String email) {
-
         log.info("sendResetLink controller reached. Email: {}", email);
-
         boolean sent = registerService.sendResetLink(email);
-
-        return sent
-                ? "Reset link sent to your email."
-                : "Unable to send reset link.";
+        return sent ? "Reset link sent to your email." : "Unable to send reset link.";
     }
 
     @GetMapping("/resetPassword")
-    public String resetPasswordPage(@RequestParam("token") String token,
-                                    Model model) {
+    public String resetPasswordPage(@RequestParam("token") String token, Model model) {
 
         model.addAttribute("token", token);
         return "resetPassword";
@@ -238,11 +232,9 @@ public class RegisterController {
         boolean updated = registerService.resetPassword(token, password);
 
         if (updated) {
-            model.addAttribute("msg",
-                    "Password reset successfully. Please login.");
+            model.addAttribute("msg", "Password reset successfully. Please login.");
             return "login";
         }
-
         model.addAttribute("msg", "Reset link is invalid or expired. Please request a new link.");
 
         return "forgotPassword";

@@ -101,7 +101,6 @@ public class RegisterRepoImpl implements RegisterRepo {
             transaction.begin();
 
             RegisterEntity entity = manager.find(RegisterEntity.class, registerEntity.getId());
-
             if (entity == null) {
                 log.warn("RegisterEntity not found");
                 transaction.rollback();
@@ -113,13 +112,13 @@ public class RegisterRepoImpl implements RegisterRepo {
             entity.setPhoneNumber(registerEntity.getPhoneNumber());
             entity.setAddress(registerEntity.getAddress());
 
-            if (registerEntity.getProfileImage() != null && !registerEntity.getProfileImage().isEmpty()) {
-                entity.setProfileImage(registerEntity.getProfileImage());
-            }
-
             // Update reset-password token
             entity.setResetToken(registerEntity.getResetToken());
             entity.setResetTokenExpiry(registerEntity.getResetTokenExpiry());
+
+            if (registerEntity.getProfileImage() != null && !registerEntity.getProfileImage().isEmpty()) {
+                entity.setProfileImage(registerEntity.getProfileImage());
+            }
 
             // Update login security fields
             if (registerEntity.getAttempts() != null) {

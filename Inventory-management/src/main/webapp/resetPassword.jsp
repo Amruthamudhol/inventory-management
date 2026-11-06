@@ -17,19 +17,14 @@
     <input type="hidden" name="token" value="${token}">
 
     <label>New Password:</label>
-    <input type="password"
-           name="password"
-           required>
+    <input type="password" name="password"required>
 
     <br><br>
 
     <label>Confirm Password:</label>
-    <input type="password"
-           name="confirmPassword"
-           required>
+    <input type="password"name="confirmPassword"required>
 
     <br><br>
-
     <button type="submit">Reset Password</button>
 
 </form>

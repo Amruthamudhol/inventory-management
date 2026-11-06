@@ -102,14 +102,12 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     public RegisterDTO checkUserBylogin(LoginDto loginDto) {
 
-        System.out.println("Running checkUserByLogin()");
-
+        log.info("Running checkUserByLogin()");
         if (loginDto == null) {
             return null;
         }
 
-        RegisterEntity entity =
-                registerRepo.findEntityByEmail(loginDto.getEmail());
+        RegisterEntity entity = registerRepo.findEntityByEmail(loginDto.getEmail());
 
         if (entity == null) {
             System.out.println("Email not found");
@@ -118,46 +116,33 @@ public class RegisterServiceImpl implements RegisterService {
 
         // Check if account is already blocked
         if (entity.isBlocked()) {
-            System.out.println("Account is blocked");
+            log.info("Account is blocked");
             return null;
         }
 
-        boolean matched = bCryptPasswordEncoder.matches(
-                loginDto.getPassword(),
-                entity.getPassword()
-        );
-
+        boolean matched = bCryptPasswordEncoder.matches(loginDto.getPassword(), entity.getPassword());
         if (matched) {
-
             entity.setAttempts(0);
             registerRepo.update(entity);
-
             RegisterDTO dto = new RegisterDTO();
             BeanUtils.copyProperties(entity, dto);
-
             return dto;
 
         } else {
-
             // Read the existing attempts count
-            int attempts = entity.getAttempts() == null
-                    ? 0
-                    : entity.getAttempts();
+            int attempts = entity.getAttempts() == null ? 0 : entity.getAttempts();
 
             // Increment failed attempts
             attempts++;
             entity.setAttempts(attempts);
-
-            System.out.println("Failed attempts: " + attempts);
+            log.info("Failed attempts: " + attempts);
 
             // Block after 3 incorrect passwords
             if (attempts >= 3) {
                 entity.setBlocked(true);
                 System.out.println("Account blocked. Reset password required.");
             }
-
             registerRepo.update(entity);
-
             return null;
         }
     }
@@ -189,7 +174,6 @@ public class RegisterServiceImpl implements RegisterService {
                 throw new RuntimeException("Error saving profile image", e);
             }
         }
-
         registerRepo.update(registerEntity);
         return true;
     }
@@ -269,22 +253,14 @@ public class RegisterServiceImpl implements RegisterService {
         }
 
         String token = InventoryUtil.generateResetToken();
-
         entity.setResetToken(token);
         entity.setResetTokenExpiry(LocalDateTime.now().plusMinutes(15));
         registerRepo.update(entity);
 
-        String resetUrl =
-                "http://localhost:8080/Inventory-management/register/resetPassword?token=" + token;
+        String resetUrl = "http://localhost:8080/Inventory-management/register/resetPassword?token=" + token;
+        String body = "Click the link below to reset your password:\n" + resetUrl + "\nThis link expires in 15 minutes.";
 
-        String body = "Click the link below to reset your password:\n" + resetUrl
-                + "\nThis link expires in 15 minutes.";
-
-        return emailService.sendEmail(
-                email,
-                "Password Reset",
-                body
-        );
+        return emailService.sendEmail(email, "Password Reset", body);
     }
 
     @Override
@@ -297,8 +273,7 @@ public class RegisterServiceImpl implements RegisterService {
         }
 
         // Check token expiry
-        if (entity.getResetTokenExpiry() == null
-                || entity.getResetTokenExpiry().isBefore(LocalDateTime.now())) {
+        if (entity.getResetTokenExpiry() == null || entity.getResetTokenExpiry().isBefore(LocalDateTime.now())) {
             return false;
         }
 

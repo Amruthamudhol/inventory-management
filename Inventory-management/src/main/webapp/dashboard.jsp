@@ -90,7 +90,7 @@
 
 <div class="navbar">
     <h2>Inventory Management</h2>
-    <a href="${pageContext.request.contextPath}/login.jsp">Logout</a>
+    <a  href="${pageContext.request.contextPath}/register/loginPage">Logout</a>
 </div>
 
 <div class="container">

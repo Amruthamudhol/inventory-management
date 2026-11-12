@@ -6,17 +6,22 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @ComponentScan(basePackages = "com.xworkz.inventory")
 @PropertySource("classpath:application.properties")
 @EnableWebMvc
+@EnableSwagger2
 public class ApplicationConfiguration implements WebMvcConfigurer {
 
     private int maxUploadSizeInMb = 5;
@@ -27,10 +32,18 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+
+        // Images
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("/images/");
-    }
 
+        // Swagger UI resources
+        registry.addResourceHandler("swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+    }
     @Bean
     public InternalResourceViewResolver viewResolver() {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
@@ -55,5 +68,15 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
         resolver.setMaxUploadSizePerFile(5 * 1024 * 1024);
 
         return resolver;
+    }
+
+
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.xworkz.inventory.controller"))
+                .paths(PathSelectors.any())
+                .build();
     }
 }

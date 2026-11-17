@@ -3,6 +3,7 @@ package com.xworkz.inventory.configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 
 import java.util.Properties;
 
@@ -27,4 +28,5 @@ public class EmailConfig {
 
         return mailSender;
     }
+
 }
